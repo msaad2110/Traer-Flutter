@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:traer/provider/custom_text_style.dart';
 import 'package:traer/provider/theme_helper.dart';
 
@@ -13,6 +14,7 @@ class CustomFloatingTextField extends StatelessWidget {
     this.textStyle,
     this.obscureText = false,
     this.textInputAction = TextInputAction.next,
+    this.textInputFormater,
     this.textInputType = TextInputType.text,
     this.maxLines,
     this.hintText,
@@ -48,6 +50,8 @@ class CustomFloatingTextField extends StatelessWidget {
 
   final TextInputAction? textInputAction;
 
+  final List<TextInputFormatter>? textInputFormater;
+
   final TextInputType? textInputType;
 
   final int? maxLines;
@@ -78,6 +82,9 @@ class CustomFloatingTextField extends StatelessWidget {
 
   final FormFieldValidator<String>? validator;
 
+  final RegExp regex = RegExp(r"^[a-zA-Z0-9\s\-_.,?!@#$%^&*()]*$");
+
+
   @override
   Widget build(BuildContext context) {
     return alignment != null
@@ -92,11 +99,15 @@ class CustomFloatingTextField extends StatelessWidget {
         width: width ?? double.maxFinite,
         child: TextFormField(
           controller: controller,
+          cursorColor: Colors.black,
           focusNode: focusNode ?? FocusNode(),
           autofocus: autofocus!,
           style: textStyle ?? CustomTextStyles.titleMediumPrimaryContainer_1,
           obscureText: obscureText!,
           textInputAction: textInputAction,
+          inputFormatters: textInputFormater ?? <TextInputFormatter>[
+            FilteringTextInputFormatter.allow(regex)
+          ],
           keyboardType: textInputType,
           maxLines: maxLines ?? 1,
           decoration: decoration,
@@ -105,6 +116,7 @@ class CustomFloatingTextField extends StatelessWidget {
       );
   InputDecoration get decoration => InputDecoration(
         hintText: hintText ?? "",
+        floatingLabelBehavior : FloatingLabelBehavior.always,
         hintStyle: hintStyle ?? CustomTextStyles.titleMediumPrimaryContainer_1,
         labelText: labelText ?? "",
         labelStyle: labelStyle,

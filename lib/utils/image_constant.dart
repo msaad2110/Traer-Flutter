@@ -170,7 +170,7 @@ class ImageConstant {
   static String imgBankOfAmerica = '$imagePath/img_bank_of_america.svg';
 
   // Common images
-  static String imgMdiTransitCon = '$imagePath/img_mdi_transit_con.svg';
+  static String imgMdiTransitCon = '$imagePath/img_mdi_transit_con.png';
 
   static String imgIcOutlineReceiptLong =
       '$imagePath/img_ic_outline_receipt_long.svg';
@@ -278,4 +278,17 @@ class ImageConstant {
   static String imgMdiCaret = '$imagePath/img_mdi_caret.svg';
 
   static String imageNotFound = 'assets/images/image_not_found.png';
+
+  static String imgSplash = 'assets/images/splash.png';
+
+  static String imglogin = 'assets/images/login.png';
+
+  static String imgIntro = 'assets/images/intro_one.png';
+
+  static String imgLogo = 'assets/images/img.png';
+
+  static String loader = 'assets/images/loader.gif';
+
+
+
 }

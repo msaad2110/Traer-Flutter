@@ -33,7 +33,6 @@ class IntroView extends StackedView<IntroViewModel>{
 
   @override
   void onViewModelReady(IntroViewModel viewModel) {
-    // TODO: implement onViewModelReady
     super.onViewModelReady(viewModel);
   }
 
@@ -74,9 +73,9 @@ class IntroView extends StackedView<IntroViewModel>{
       ),
       pages: [
         firstPage(pageDecoration,context),
+        secondPage(pageDecoration,context),
         firstPage(pageDecoration,context),
-        firstPage(pageDecoration,context),
-        firstPage(pageDecoration,context),
+        secondPage(pageDecoration,context),
 
       ],
       onDone: () => _onIntroEnd(),
@@ -121,14 +120,24 @@ class IntroView extends StackedView<IntroViewModel>{
     return PageViewModel(
       title: "lbl_send_anywhere".tr,
       body: "msg_lorem_ipsum_dolor".tr,
-      image: _buildImage(ImageConstant.imgVector1,MediaQuery.of(context).size.width),
+      image: _buildImage(ImageConstant.imglogin,MediaQuery.of(context).size.width),
+      decoration: pageDecoration,
+    );
+  }
+
+  PageViewModel secondPage(PageDecoration pageDecoration , BuildContext context){
+
+    return PageViewModel(
+      title: "lbl_send_anywhere".tr,
+      body: "msg_lorem_ipsum_dolor".tr,
+      image: _buildImage(ImageConstant.imgIntro,MediaQuery.of(context).size.width * 0.8),
       decoration: pageDecoration,
     );
   }
 
 
   Widget _buildImage(String assetName,double width) {
-    return Container(width: width , color : Colors.white,child: Image.asset('$assetName',fit: BoxFit.fill, width: double.infinity,));
+    return SafeArea(child: Container(width: width , color : Colors.white,child: Image.asset('$assetName',fit: BoxFit.fill, width: double.infinity,)));
   }
 
   void _onIntroEnd() {
@@ -169,7 +178,7 @@ class IntroView extends StackedView<IntroViewModel>{
 
 
   onTapGetStarted(BuildContext context) {
-    locator<NavigationService>().navigateTo(Routes.mainView);
+    locator<NavigationService>().navigateTo(Routes.signUpView);
   }
 
   /// Navigates to the loginScreen when the action is triggered.

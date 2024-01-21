@@ -1,10 +1,16 @@
 
 
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:traer/base/app_setup.locator.dart';
 import 'package:traer/models/LoginItemModel.dart';
+import 'package:traer/models/login_response.dart';
+import 'package:traer/network/client.dart';
+import 'package:traer/network/restservice.dart';
 import 'package:traer/utils/image_constant.dart';
+import 'package:traer/utils/pref_utils.dart';
 
 class LoginViewModel extends BaseViewModel{
 
@@ -14,9 +20,23 @@ class LoginViewModel extends BaseViewModel{
     LoginItemModel(rectangle: ImageConstant.imgRectangle15),
     LoginItemModel(rectangle: ImageConstant.imgRectangle16)
   ];
+  FocusNode focusNodeEmail = FocusNode();
+  FocusNode focusNodePassword = FocusNode();
+  late BuildContext formContext;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  final service = locator<RestService>();
+
+
+  Future<LoginResponse>  login(String email , String password) async {
+
+    LoginResponse responseModel = await service.login(email,password);
+
+    return  responseModel;
+
+  }
 
   String? validateEmail(String? value){
 
@@ -39,6 +59,17 @@ class LoginViewModel extends BaseViewModel{
 
     return null;
 
+  }
+
+
+  bool validateForm(BuildContext context){
+    return Form.of(context).validate();
+  }
+
+  void updateToken(){
+    locator<RestService>().client = ApiService(Dio(),token:  PrefUtils().getToken(PrefUtils.token));
+    print( "PrefUtils().getToken(PrefUtils.token)");
+    print( PrefUtils().getToken(PrefUtils.token));
   }
 
 }

@@ -9,7 +9,7 @@ import 'package:traer/utils/customtextstyle.dart';
 class CustomDialog{
 
 
-  static Future showErrorDialog(BuildContext cont ){
+  static Future showErrorDialog(BuildContext cont  , {String message = "Error occured try again" , required Function() onPressedDialog}){
 
     return showDialog(context: cont, builder: (BuildContext context , ){
       return PopScope(
@@ -19,12 +19,40 @@ class CustomDialog{
           },
           child: AlertDialog(
             title: Text(AppStrings.appName),
-            content: Text("Error occured try again"),
+            content: Text(message),
             actions: <Widget>[
 
               TextButton(
                   onPressed:  (){
+                    onPressedDialog();
                     Navigator.pop(context);
+                  }, child: Text("OK",style: CustomTextStyle.customStyle(16.0, ColorsField.blackColor, FontWeight.normal),))
+
+            ],
+          )
+      );
+    },barrierDismissible: false);
+
+  }
+
+
+  static Future showSuccessDialog(BuildContext cont  , {String message = "Success" , required Function() onPressedDialog}){
+
+    return showDialog(context: cont, builder: (BuildContext context , ){
+      return PopScope(
+          canPop: false,
+          onPopInvoked: (value){
+
+          },
+          child: AlertDialog(
+            title: Text(AppStrings.appName),
+            content: Text(message),
+            actions: <Widget>[
+
+              TextButton(
+                  onPressed:  (){
+
+                    onPressedDialog();
                   }, child: Text("OK",style: CustomTextStyle.customStyle(16.0, ColorsField.blackColor, FontWeight.normal),))
 
             ],

@@ -66,7 +66,7 @@ final Map<String, String> enUs = {
 
   // Traveler - New Order Screen
   "lbl_alue": "ALUE ",
-  "lbl_description": "DEscription",
+  "lbl_description": "Description",
   "lbl_e": "E",
   "lbl_f": "F ",
   "lbl_o": "O",
@@ -76,7 +76,7 @@ final Map<String, String> enUs = {
   "lbl_stimated": "STIMATED ",
   "lbl_type_of_product": "Type Of Product",
   "lbl_v": "V",
-  "msg_estimated_value": "ESTIMATED VALUE OF PRODUCT",
+  "msg_estimated_value": "Estimated value of Product",
   "msg_send_to_customer": "Send to customer",
   "msg_tell_us_about_what": "Tell us about what you want to send..",
 

@@ -3,9 +3,14 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:traer/models/login_response.dart';
 
 class PrefUtils {
   static SharedPreferences? _sharedPreferences;
+  static String token = "Token";
+  static String userData = "UserData";
+  static String isSeen = "seen";
+  static String rememberUser = "rememberUser";
 
   PrefUtils() {
     // init();
@@ -33,6 +38,75 @@ class PrefUtils {
       return _sharedPreferences!.getString('themeData')!;
     } catch (e) {
       return 'primary';
+    }
+  }
+
+
+  Future<void> setFirstRun(bool value) {
+    return _sharedPreferences!.setBool(isSeen, value);
+  }
+
+  bool getFirstRun() {
+    try {
+      return _sharedPreferences!.getBool(isSeen)!;
+    } catch (e) {
+      return false;
+    }
+  }
+
+
+  read(String key) async {
+    try {
+       if(_sharedPreferences!.containsKey(key)){
+         return json.decode(_sharedPreferences!.getString(key)!);
+       }else{
+         return null;
+       }
+      return json.decode(_sharedPreferences!.getString(key)!);
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  String? getToken(String key)  {
+    try {
+      if(_sharedPreferences!.containsKey(key)){
+        return json.decode(_sharedPreferences!.getString(key)!);
+      }else{
+        return null;
+      }
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+
+
+  save(String key, value) async {
+    _sharedPreferences!.setString(key, json.encode(value));
+  }
+
+  remove(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove(key);
+  }
+
+  bool isContainKey(String key) {
+    return _sharedPreferences!.containsKey(key);
+  }
+
+
+  Future<void> isRememberUser(bool value) {
+    return _sharedPreferences!.setBool(rememberUser, value);
+  }
+
+  bool getIsRememberUser() {
+    try {
+      return _sharedPreferences!.getBool(rememberUser)!;
+    } catch (e) {
+      return false;
     }
   }
 }

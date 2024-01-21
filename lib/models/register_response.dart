@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'register_response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: true)
 class RegisterResponse{
   bool? success;
   String? message;
@@ -28,24 +28,19 @@ class Data {
 
 @JsonSerializable()
 class User {
-  String? firstName;
-  String? lastName;
+  String? first_name;
+  String? last_name;
   String? country;
   String? phone;
   String? email;
-  String? updatedAt;
-  String? createdAt;
+  String? updated_at;
+  String? created_at;
   int? id;
+  String? is_traveller;
 
-  User(
-      {this.firstName,
-        this.lastName,
-        this.country,
-        this.phone,
-        this.email,
-        this.updatedAt,
-        this.createdAt,
-        this.id});
+
+  User(this.first_name, this.last_name, this.country, this.phone, this.email,
+      this.updated_at, this.created_at, this.id, this.is_traveller);
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   Map<String, dynamic> toJson() => _$UserToJson(this);

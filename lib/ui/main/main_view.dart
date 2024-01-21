@@ -15,7 +15,15 @@ class MainView extends StackedView<MainViewModel>{
   @override
   Widget builder(BuildContext context, MainViewModel viewModel, Widget? child) {
     return Scaffold(
-      body: Container(),
+      resizeToAvoidBottomInset: false,
+      body:  SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: viewModel.pages[viewModel.currentIndex],
+              ),
+            ],
+          )),
       bottomNavigationBar: buildBottomBar(viewModel),
     );
   }
@@ -39,7 +47,7 @@ class MainView extends StackedView<MainViewModel>{
 
   Widget buildBottomBar(MainViewModel viewModel){
     return Container(
-      height: 80,
+      height: 65,
       decoration: BoxDecoration(
         color: theme.colorScheme.onErrorContainer.withOpacity(1),
         borderRadius: BorderRadius.vertical(

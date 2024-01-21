@@ -35,23 +35,25 @@ Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
     };
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
-      firstName: json['firstName'] as String?,
-      lastName: json['lastName'] as String?,
-      country: json['country'] as String?,
-      phone: json['phone'] as String?,
-      email: json['email'] as String?,
-      updatedAt: json['updatedAt'] as String?,
-      createdAt: json['createdAt'] as String?,
-      id: json['id'] as int?,
+      json['first_name'] as String?,
+      json['last_name'] as String?,
+      json['country'] as String?,
+      json['phone'] as String?,
+      json['email'] as String?,
+      json['updated_at'] as String?,
+      json['created_at'] as String?,
+      json['id'] as int?,
+      json['is_traveller'] as String?,
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-      'firstName': instance.firstName,
-      'lastName': instance.lastName,
+      'first_name': instance.first_name,
+      'last_name': instance.last_name,
       'country': instance.country,
       'phone': instance.phone,
       'email': instance.email,
-      'updatedAt': instance.updatedAt,
-      'createdAt': instance.createdAt,
+      'updated_at': instance.updated_at,
+      'created_at': instance.created_at,
       'id': instance.id,
+      'is_traveller': instance.is_traveller,
     };

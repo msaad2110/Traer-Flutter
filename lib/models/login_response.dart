@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'login_response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: true )
 class LoginResponse{
   bool? success;
   String? message;
@@ -14,12 +14,12 @@ class LoginResponse{
   Map<String, dynamic> toJson() => _$LoginResponseToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: true)
 class Data {
   String? token;
   User? user;
 
-  Data({this.token, this.user});
+  Data({ this.token,  this.user});
 
 
   factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
@@ -27,28 +27,30 @@ class Data {
 
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: true)
 class User {
   int? id;
-  String? firstName;
-  String? lastName;
+  String? first_name;
+  String? last_name;
   String? email;
   String? phone;
   String? country;
-  Object? emailVerifiedAt;
-  String? createdAt;
-  String? updatedAt;
+  Object? email_verified_at;
+  String? created_at;
+  String? updated_at;
+  int? is_traveller;
 
   User(
-      {this.id,
-        this.firstName,
-        this.lastName,
-        this.email,
-        this.phone,
-        this.country,
-        this.emailVerifiedAt,
-        this.createdAt,
-        this.updatedAt});
+      { this.id,
+         this.first_name,
+          this.last_name,
+         this.email,
+         this.phone,
+         this.country,
+         this.email_verified_at,
+         this.created_at,
+         this.updated_at,
+         this.is_traveller});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   Map<String, dynamic> toJson() => _$UserToJson(this);

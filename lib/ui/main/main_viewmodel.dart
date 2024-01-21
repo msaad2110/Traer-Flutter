@@ -7,6 +7,7 @@ import 'package:traer/ui/chat/chat_view.dart';
 import 'package:traer/ui/fund/fund_view.dart';
 import 'package:traer/ui/home/home_view.dart';
 import 'package:traer/ui/order/order_view.dart';
+import 'package:traer/ui/order_history/order_history_view.dart';
 
 class MainViewModel extends BaseViewModel{
 
@@ -14,7 +15,8 @@ class MainViewModel extends BaseViewModel{
 
   final List<Widget> pages = [
     HomeView(),
-    OrderView(),
+    /*OrderView(),*/
+    OrderHistoryView(),
     ChatView(),
     FundView(),
     AccountView(),

@@ -36,24 +36,26 @@ Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
       id: json['id'] as int?,
-      firstName: json['firstName'] as String?,
-      lastName: json['lastName'] as String?,
+      first_name: json['first_name'] as String?,
+      last_name: json['last_name'] as String?,
       email: json['email'] as String?,
       phone: json['phone'] as String?,
       country: json['country'] as String?,
-      emailVerifiedAt: json['emailVerifiedAt'],
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
+      email_verified_at: json['email_verified_at'],
+      created_at: json['created_at'] as String?,
+      updated_at: json['updated_at'] as String?,
+      is_traveller: json['is_traveller'] as int?,
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'id': instance.id,
-      'firstName': instance.firstName,
-      'lastName': instance.lastName,
+      'first_name': instance.first_name,
+      'last_name': instance.last_name,
       'email': instance.email,
       'phone': instance.phone,
       'country': instance.country,
-      'emailVerifiedAt': instance.emailVerifiedAt,
-      'createdAt': instance.createdAt,
-      'updatedAt': instance.updatedAt,
+      'email_verified_at': instance.email_verified_at,
+      'created_at': instance.created_at,
+      'updated_at': instance.updated_at,
+      'is_traveller': instance.is_traveller,
     };

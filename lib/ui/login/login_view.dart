@@ -3,20 +3,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:traer/base/app_setup.locator.dart';
 import 'package:traer/base/app_setup.router.dart';
 import 'package:traer/localization/app_localization.dart';
 import 'package:traer/models/LoginItemModel.dart';
+import 'package:traer/models/login_response.dart';
+import 'package:traer/models/user_data_holder.dart';
 import 'package:traer/provider/app_decoration.dart';
 import 'package:traer/provider/custom_button_style.dart';
 import 'package:traer/provider/custom_text_style.dart';
 import 'package:traer/ui/login/login_viewmodel.dart';
+import 'package:traer/utils/dialog.dart';
 import 'package:traer/utils/image_constant.dart';
+import 'package:traer/utils/pref_utils.dart';
 import 'package:traer/widgets/custom_floating_text_field.dart';
 import 'package:traer/widgets/custom_image_view.dart';
+import 'package:traer/widgets/custom_loader.dart';
 import 'package:traer/widgets/custom_outlined_button.dart';
+import 'package:traer/widgets/custom_progressbar.dart';
 
 class LoginView extends StackedView<LoginViewModel>{
 
@@ -26,69 +33,83 @@ class LoginView extends StackedView<LoginViewModel>{
     return SafeArea(
         child: Scaffold(
             resizeToAvoidBottomInset: false,
-            body: Form(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                child: Builder(
-                  builder: (context){
-                    return Container(
-                        width: double.maxFinite,
-                        padding: EdgeInsets.symmetric(vertical: 50),
-                        child: Column(children: [
-                          SizedBox(height: 17),
-                         // _buildLoginSection(context,viewModel),
-                          SizedBox(height: 36),
-                          Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: _buildEmailField(context, viewModel)
-                                  ),
-                          SizedBox(height: 10),
-                          Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child:  _buildPasswordField(context, viewModel)
-                                  ),
-                          SizedBox(height: 10),
-                          CustomOutlinedButton(
-                              height: 48,
-                              text: "lbl_log_in".tr,
-                              margin: EdgeInsets.symmetric(horizontal: 20),
-                              buttonStyle: CustomButtonStyles.outlinePrimaryTL101,
-                              buttonTextStyle: CustomTextStyles
-                                  .titleMediumOnErrorContainerSemiBold,
-                              onPressed: () {
-                                onTapLogIn(context);
-                              }),
-                          SizedBox(height: 8),
-                          Text("msg_forgot_password".tr,
-                              style: CustomTextStyles.titleSmallPrimaryContainer),
-                          // SizedBox(height: 72),
-                          // Align(
-                          //     alignment: Alignment.centerLeft,
-                          //     child: Padding(
-                          //         padding: EdgeInsets.only(left: 16),
-                          //         child: Text("msg_log_in_with_socials".tr,
-                          //             style: CustomTextStyles
-                          //                 .titleMediumBluegray400))),
-                          // SizedBox(height: 15),
-                          // _buildFrameTwoSection(context),
-                          SizedBox(height: 31),
-                          GestureDetector(
-                              onTap: () {
-                                onTapTxtDonthaveanaccount(context);
-                              },
-                              child: RichText(
-                                  text: TextSpan(children: [
-                                    TextSpan(
-                                        text: "msg_don_t_have_an_account2".tr,
-                                        style: CustomTextStyles.titleSmallBlack900),
-                                    TextSpan(text: " "),
-                                    TextSpan(
-                                        text: "lbl_become_a_member".tr,
-                                        style: CustomTextStyles.titleSmallPrimary)
-                                  ]),
-                                  textAlign: TextAlign.left))
-                        ]));
-                  },
-                ) )));
+            body: LoaderOverlay(
+              useDefaultLoading: false,
+              overlayWidgetBuilder: (pro){
+                return customProgessBar();
+              },
+              child: Form(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Builder(
+                    builder: (context){
+                      viewModel.formContext = context;
+                      return Container(
+                          width: double.maxFinite,
+                          padding: EdgeInsets.symmetric(vertical: 50),
+                          child: Column(children: [
+                            SizedBox(height: 17),
+                           // _buildLoginSection(context,viewModel),
+                            _buildImage(ImageConstant.imglogin,MediaQuery.of(context).size.width),
+                            SizedBox(height: 36),
+                            Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child: _buildEmailField(context, viewModel)
+                                    ),
+                            SizedBox(height: 10),
+                            Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child:  _buildPasswordField(context, viewModel)
+                                    ),
+                            SizedBox(height: 10),
+                            CustomOutlinedButton(
+                                height: 48,
+                                text: "lbl_log_in".tr,
+                                margin: EdgeInsets.symmetric(horizontal: 20),
+                                buttonStyle: CustomButtonStyles.outlinePrimaryTL101,
+                                buttonTextStyle: CustomTextStyles
+                                    .titleMediumOnErrorContainerSemiBold,
+                                onPressed: () {
+                                  if(viewModel.validateForm(viewModel.formContext)){
+                                    print("object");
+                                    onTapLogIn(context,viewModel);
+                                  }else{
+                                    print("form is not validated");
+                                  }
+              
+                                }),
+                            SizedBox(height: 8),
+                            Text("msg_forgot_password".tr,
+                                style: CustomTextStyles.titleSmallPrimaryContainer),
+                            // SizedBox(height: 72),
+                            // Align(
+                            //     alignment: Alignment.centerLeft,
+                            //     child: Padding(
+                            //         padding: EdgeInsets.only(left: 16),
+                            //         child: Text("msg_log_in_with_socials".tr,
+                            //             style: CustomTextStyles
+                            //                 .titleMediumBluegray400))),
+                            // SizedBox(height: 15),
+                            // _buildFrameTwoSection(context),
+                            SizedBox(height: 31),
+                            GestureDetector(
+                                onTap: () {
+                                  onTapTxtDonthaveanaccount(context);
+                                },
+                                child: RichText(
+                                    text: TextSpan(children: [
+                                      TextSpan(
+                                          text: "msg_don_t_have_an_account2".tr,
+                                          style: CustomTextStyles.titleSmallBlack900),
+                                      TextSpan(text: " "),
+                                      TextSpan(
+                                          text: "lbl_become_a_member".tr,
+                                          style: CustomTextStyles.titleSmallPrimary)
+                                    ]),
+                                    textAlign: TextAlign.left))
+                          ]));
+                    },
+                  ) ),
+            )));
   }
 
   @override
@@ -166,6 +187,11 @@ class LoginView extends StackedView<LoginViewModel>{
             ]));
   }
 
+
+  Widget _buildImage(String assetName,double width) {
+    return SafeArea(child: Container(width: width , color : Colors.white,child: Image.asset('$assetName',fit: BoxFit.fill, width: double.infinity,)));
+  }
+
   /// Section Widget
   Widget _buildFrameTwoSection(BuildContext context) {
     return Padding(
@@ -210,8 +236,32 @@ class LoginView extends StackedView<LoginViewModel>{
   }
 
   /// Navigates to the travelerHomepageContainer1Screen when the action is triggered.
-  onTapLogIn(BuildContext context) {
-    locator<NavigationService>().navigateTo(Routes.splashView);
+  onTapLogIn(BuildContext context , LoginViewModel viewModel) {
+    CustomLoader.showLoader(context);
+  //  viewModel.login("shaheerzaeem26@gmail.com", "test_password").then((value){
+    viewModel.login(viewModel.emailController.text, viewModel.passwordController.text).then((value) async{
+      CustomLoader.hideLoader(context);
+
+      if(value.success ?? false){
+        await PrefUtils().save(PrefUtils.token, value.data!.token);
+        isSaveUserData(value);
+        viewModel.updateToken();
+        locator<NavigationService>().pushNamedAndRemoveUntil(Routes.mainView);
+      }else{
+        CustomDialog.showErrorDialog(context,message: value.message ?? "" , onPressedDialog: (){
+          Navigator.pop(context);
+        });
+      }
+      print("value");
+    }).catchError((onError){
+      print(onError.toString());
+      CustomLoader.hideLoader(context);
+      CustomDialog.showErrorDialog(context, onPressedDialog: (){
+        Navigator.pop(context);
+      });
+      print(onError.toString());
+    });
+   // locator<NavigationService>().navigateTo(Routes.splashView);
   }
 
   /// Navigates to the signUpScreen when the action is triggered.
@@ -244,13 +294,13 @@ class LoginView extends StackedView<LoginViewModel>{
             labelText: "msg_username_email".tr,
             labelStyle: CustomTextStyles
                 .titleMediumPrimaryContainer_1,
+            focusNode: viewModel.focusNodeEmail,
             hintText: "msg_username_email".tr,
             textInputType: TextInputType.emailAddress,
             borderDecoration: FloatingTextFormFieldStyleHelper.custom,
             contentPadding: EdgeInsets.only(top: 18),
-            validator: (value) {
-              viewModel.validateEmail(value);
-            }));
+            validator: viewModel.validateEmail
+            ));
   }
 
   Widget _buildPasswordField(BuildContext context , LoginViewModel viewModel) {
@@ -269,12 +319,27 @@ class LoginView extends StackedView<LoginViewModel>{
             textInputAction: TextInputAction.done,
             textInputType:
             TextInputType.visiblePassword,
+            focusNode: viewModel.focusNodePassword,
             borderDecoration: FloatingTextFormFieldStyleHelper.custom,
             contentPadding: EdgeInsets.only(top: 18),
             obscureText: true,
-            validator: (value) {
-              viewModel.validatePassword(value);
-            }));
+            validator: viewModel.validatePassword
+            ));
+  }
+
+  isSaveUserData(LoginResponse loginResponse) async {
+
+    if(PrefUtils().getIsRememberUser()){
+      print("remembered");
+      await PrefUtils().save(PrefUtils.userData, loginResponse);
+      UserDataHolder.getInstance().loginData = await LoginResponse.fromJson(await PrefUtils().read(PrefUtils.userData));
+
+    }else{
+      print("not remembered");
+      UserDataHolder.getInstance().loginData = loginResponse;
+    }
+
+
   }
 
 }
