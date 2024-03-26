@@ -49,7 +49,7 @@ class LoginView extends StackedView<LoginViewModel>{
                           child: Column(children: [
                             SizedBox(height: 17),
                            // _buildLoginSection(context,viewModel),
-                            _buildImage(ImageConstant.imglogin,MediaQuery.of(context).size.width),
+                            _buildImage(ImageConstant.imglogin,MediaQuery.sizeOf(context).width),
                             SizedBox(height: 36),
                             Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -284,7 +284,7 @@ class LoginView extends StackedView<LoginViewModel>{
 
   Widget _buildEmailField(BuildContext context , LoginViewModel viewModel) {
     return Container(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery.sizeOf(context).width,
         margin: EdgeInsets.symmetric(horizontal: 0),
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppDecoration.fillGray10001
@@ -305,7 +305,7 @@ class LoginView extends StackedView<LoginViewModel>{
 
   Widget _buildPasswordField(BuildContext context , LoginViewModel viewModel) {
     return Container(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery.sizeOf(context).width,
         margin: EdgeInsets.symmetric(horizontal: 0),
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: AppDecoration.fillGray10001

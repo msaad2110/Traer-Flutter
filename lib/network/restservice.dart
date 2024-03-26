@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:traer/models/all_luggagetype.dart';
 import 'package:traer/models/city_response.dart';
 import 'package:traer/models/country_response.dart';
+import 'package:traer/models/document_types.dart';
 import 'package:traer/models/general_response.dart';
 import 'package:traer/models/login_response.dart';
 import 'package:traer/models/order_history_model.dart';
@@ -202,8 +203,7 @@ import 'package:traer/utils/pref_utils.dart';
 
 
 
-   Future<GeneralResponse>  newTrip( int user_id ,  int luggage_type_id,   String travelling_from,
-       String travelling_to,  String start_date,   String end_date,  int luggage_space , int commission) async {
+   Future<GeneralResponse>  newTrip( int user_id ,  int luggage_type_id,   String travelling_from, String travelling_to,  String start_date,   String end_date,  int luggage_space , int commission) async {
 
      GeneralResponse responseModel;
 
@@ -302,7 +302,8 @@ import 'package:traer/utils/pref_utils.dart';
    }
 
 
-   Future<TripHistoryModel>  getAllTrips( int userid ) async {
+   Future<TripHistoryModel>  getAllTrips( int userid ,String? startDate , String? endDate ,
+       int? luggageSpace , String? from , int? commissionStart , int? commissionEnd) async {
 
      //TripHistoryModel responseModel = await client.getAllTrips(userid);
 
@@ -310,7 +311,7 @@ import 'package:traer/utils/pref_utils.dart';
      TripHistoryModel responseModel ;
 
      try {
-       responseModel = await client.getAllTrips(userid);
+       responseModel = await client.getAllTrips(userid,startDate,endDate,luggageSpace,from,commissionStart,commissionEnd);
        // Process successful response
      } on DioException catch (error) {
        // Handle errors based on status code
@@ -449,6 +450,407 @@ import 'package:traer/utils/pref_utils.dart';
      }
 
 
+
+     return  responseModel;
+
+   }
+
+
+
+   Future<GeneralResponse>  updateTrip( int tripID , int user_id ,  int luggage_type_id,   String travelling_from, String travelling_to,  String start_date,   String end_date,  int luggage_space , int commission) async {
+
+     GeneralResponse responseModel;
+
+     try {
+       responseModel  = await client.updateTrip(tripID ,user_id,luggage_type_id,travelling_from,travelling_to,start_date,end_date,commission,luggage_space);
+       // Process successful response
+     } on DioException catch (error) {
+       // Handle errors based on status code
+       if (error.response != null) {
+         final statusCode = error.response!.statusCode;
+         switch (statusCode) {
+           case 400:
+           // Handle 400 Bad Request (e.g., invalid email or password)
+           // final parsedError = ErrorResponse.fromJson(error.response!.data);
+             responseModel = GeneralResponse(success : false ,message :  "Error Occured"  , data : null);
+             //print("Error: ${parsedError.message}");
+             break;
+           case 401:
+           // Handle 401 Unauthorized (e.g., wrong credentials)
+             responseModel = GeneralResponse(success : false ,message :  "Unauthorized access"  , data : null);
+             print("Unauthorized access");
+             break;
+           case 500:
+           // Handle 500 Internal Server Error
+             print("Internal server error");
+             responseModel = GeneralResponse.fromJson(error.response!.data);
+             // responseModel = LoginResponse(success : false ,message :  "Internal server error"  , data : null);
+
+             break;
+         // ... Handle other status codes as needed
+           default:
+           // Handle unexpected errors
+             responseModel = GeneralResponse(success : false ,message :  "Unexpected error: ${error.message}" , data : null);
+             print("Unexpected error: ${error.message}");
+         }
+       } else {
+         // Handle network errors or other issues
+         print("Network error: ${error.message}");
+         responseModel = GeneralResponse(success : false , message :  "NetworkError" , data : null);
+       }
+     }
+
+
+     return  responseModel;
+
+   }
+
+
+
+   Future<GeneralResponse>  deleteTrip(int tripID , int userID) async {
+
+     GeneralResponse responseModel ;
+
+     try {
+       responseModel  = await client.deleteTrip(tripID,userID);
+       // Process successful response
+     } on DioException catch (error) {
+       print(error.toString());
+       // Handle errors based on status code
+       if (error.response != null) {
+         final statusCode = error.response!.statusCode;
+         switch (statusCode) {
+           case 400:
+           // Handle 400 Bad Request (e.g., invalid email or password)
+           // final parsedError = ErrorResponse.fromJson(error.response!.data);
+             responseModel = GeneralResponse(success : false ,message :  "Error Occured"  , data : null);
+             //print("Error: ${parsedError.message}");
+             break;
+           case 401:
+           // Handle 401 Unauthorized (e.g., wrong credentials)
+             responseModel = GeneralResponse(success : false ,message :  "Unauthorized access"  , data : null);
+             print("Unauthorized access");
+             break;
+           case 500:
+           // Handle 500 Internal Server Error
+             print("Internal server error");
+             print(error.response?.data.toString());
+             responseModel = GeneralResponse.fromJson(error.response!.data);
+             // responseModel = LoginResponse(success : false ,message :  "Internal server error"  , data : null);
+
+             break;
+         // ... Handle other status codes as needed
+           default:
+           // Handle unexpected errors
+             responseModel = GeneralResponse(success : false ,message :  "Unexpected error: ${error.message}" , data : null);
+             print("Unexpected error: ${error.message}");
+         }
+       } else {
+         // Handle network errors or other issues
+         print("Network error: ${error.message}");
+         responseModel = GeneralResponse(success : false , message :  "NetworkError" , data : null);
+       }
+     }
+
+     return  responseModel;
+
+   }
+
+   Future<GeneralResponse>  changePassword(int userID , String action , String password , String passwordConfirmation ,  String oldPassword) async {
+
+     GeneralResponse responseModel ;
+
+     try {
+       responseModel  = await client.changePassword(userID,action,password,passwordConfirmation,oldPassword);
+       // Process successful response
+     } on DioException catch (error) {
+       print(error.toString());
+       // Handle errors based on status code
+       if (error.response != null) {
+         final statusCode = error.response!.statusCode;
+         switch (statusCode) {
+           case 400:
+           // Handle 400 Bad Request (e.g., invalid email or password)
+           // final parsedError = ErrorResponse.fromJson(error.response!.data);
+             responseModel = GeneralResponse(success : false ,message :  "Error Occured"  , data : null);
+             //print("Error: ${parsedError.message}");
+             break;
+           case 401:
+           // Handle 401 Unauthorized (e.g., wrong credentials)
+             responseModel = GeneralResponse(success : false ,message :  "Unauthorized access"  , data : null);
+             print("Unauthorized access");
+             break;
+           case 500:
+           // Handle 500 Internal Server Error
+             print("Internal server error");
+             print(error.response?.data.toString());
+             responseModel = GeneralResponse.fromJson(error.response!.data);
+             // responseModel = LoginResponse(success : false ,message :  "Internal server error"  , data : null);
+
+             break;
+         // ... Handle other status codes as needed
+           default:
+           // Handle unexpected errors
+             responseModel = GeneralResponse(success : false ,message :  "Unexpected error: ${error.message}" , data : null);
+             print("Unexpected error: ${error.message}");
+         }
+       } else {
+         // Handle network errors or other issues
+         print("Network error: ${error.message}");
+         responseModel = GeneralResponse(success : false , message :  "NetworkError" , data : null);
+       }
+     }
+
+     return  responseModel;
+
+   }
+
+
+   Future<GeneralResponse>  sendOTP( String email ) async {
+
+     GeneralResponse responseModel ;
+
+     try {
+       responseModel  = await client.sendOTP(email);
+       // Process successful response
+     } on DioException catch (error) {
+       print(error.toString());
+       // Handle errors based on status code
+       if (error.response != null) {
+         final statusCode = error.response!.statusCode;
+         switch (statusCode) {
+           case 400:
+           // Handle 400 Bad Request (e.g., invalid email or password)
+           // final parsedError = ErrorResponse.fromJson(error.response!.data);
+             responseModel = GeneralResponse(success : false ,message :  "Error Occured"  , data : null);
+             //print("Error: ${parsedError.message}");
+             break;
+           case 401:
+           // Handle 401 Unauthorized (e.g., wrong credentials)
+             responseModel = GeneralResponse(success : false ,message :  "Unauthorized access"  , data : null);
+             print("Unauthorized access");
+             break;
+           case 500:
+           // Handle 500 Internal Server Error
+             print("Internal server error");
+             print(error.response?.data.toString());
+             responseModel = GeneralResponse.fromJson(error.response!.data);
+             // responseModel = LoginResponse(success : false ,message :  "Internal server error"  , data : null);
+
+             break;
+         // ... Handle other status codes as needed
+           default:
+           // Handle unexpected errors
+             responseModel = GeneralResponse(success : false ,message :  "Unexpected error: ${error.message}" , data : null);
+             print("Unexpected error: ${error.message}");
+         }
+       } else {
+         // Handle network errors or other issues
+         print("Network error: ${error.message}");
+         responseModel = GeneralResponse(success : false , message :  "NetworkError" , data : null);
+       }
+     }
+
+     return  responseModel;
+
+   }
+
+   Future<GeneralResponse>  verifyOTP( String email , String otp) async {
+
+     GeneralResponse responseModel ;
+
+     try {
+       responseModel  = await client.verifyOTP(email,otp);
+       // Process successful response
+     } on DioException catch (error) {
+       print(error.toString());
+       // Handle errors based on status code
+       if (error.response != null) {
+         final statusCode = error.response!.statusCode;
+         switch (statusCode) {
+           case 400:
+           // Handle 400 Bad Request (e.g., invalid email or password)
+           // final parsedError = ErrorResponse.fromJson(error.response!.data);
+             responseModel = GeneralResponse(success : false ,message :  "Error Occured"  , data : null);
+             //print("Error: ${parsedError.message}");
+             break;
+           case 401:
+           // Handle 401 Unauthorized (e.g., wrong credentials)
+             responseModel = GeneralResponse(success : false ,message :  "Unauthorized access"  , data : null);
+             print("Unauthorized access");
+             break;
+           case 500:
+           // Handle 500 Internal Server Error
+             print("Internal server error");
+             print(error.response?.data.toString());
+             responseModel = GeneralResponse.fromJson(error.response!.data);
+             // responseModel = LoginResponse(success : false ,message :  "Internal server error"  , data : null);
+
+             break;
+         // ... Handle other status codes as needed
+           default:
+           // Handle unexpected errors
+             responseModel = GeneralResponse(success : false ,message :  "Unexpected error: ${error.message}" , data : null);
+             print("Unexpected error: ${error.message}");
+         }
+       } else {
+         // Handle network errors or other issues
+         print("Network error: ${error.message}");
+         responseModel = GeneralResponse(success : false , message :  "NetworkError" , data : null);
+       }
+     }
+
+     return  responseModel;
+
+   }
+
+
+
+   Future<GeneralResponse>  updateProfile(int userID , String fName , String lName , String email ,String phone,String action) async {
+
+     GeneralResponse responseModel ;
+
+     try {
+       responseModel  = await client.updateProfile(userID,fName,lName,email,phone,action);
+       // Process successful response
+     } on DioException catch (error) {
+       print(error.toString());
+       // Handle errors based on status code
+       if (error.response != null) {
+         final statusCode = error.response!.statusCode;
+         switch (statusCode) {
+           case 400:
+           // Handle 400 Bad Request (e.g., invalid email or password)
+           // final parsedError = ErrorResponse.fromJson(error.response!.data);
+             responseModel = GeneralResponse(success : false ,message :  "Error Occured"  , data : null);
+             //print("Error: ${parsedError.message}");
+             break;
+           case 401:
+           // Handle 401 Unauthorized (e.g., wrong credentials)
+             responseModel = GeneralResponse(success : false ,message :  "Unauthorized access"  , data : null);
+             print("Unauthorized access");
+             break;
+           case 500:
+           // Handle 500 Internal Server Error
+             print("Internal server error");
+             print(error.response?.data.toString());
+             responseModel = GeneralResponse.fromJson(error.response!.data);
+             // responseModel = LoginResponse(success : false ,message :  "Internal server error"  , data : null);
+
+             break;
+         // ... Handle other status codes as needed
+           default:
+           // Handle unexpected errors
+             responseModel = GeneralResponse(success : false ,message :  "Unexpected error: ${error.message}" , data : null);
+             print("Unexpected error: ${error.message}");
+         }
+       } else {
+         // Handle network errors or other issues
+         print("Network error: ${error.message}");
+         responseModel = GeneralResponse(success : false , message :  "NetworkError" , data : null);
+       }
+     }
+
+     return  responseModel;
+
+   }
+
+
+
+   Future<GeneralResponse>  uploadProfilePicture(int userID ,String action , int documentTypeID ,File picture) async {
+
+     GeneralResponse responseModel ;
+
+     try {
+       responseModel  = await client.uploadProfilePicture(userID,action,documentTypeID,picture);
+       // Process successful response
+     } on DioException catch (error) {
+       print(error.toString());
+       // Handle errors based on status code
+       if (error.response != null) {
+         final statusCode = error.response!.statusCode;
+         switch (statusCode) {
+           case 400:
+           // Handle 400 Bad Request (e.g., invalid email or password)
+           // final parsedError = ErrorResponse.fromJson(error.response!.data);
+             responseModel = GeneralResponse(success : false ,message :  "Error Occured"  , data : null);
+             //print("Error: ${parsedError.message}");
+             break;
+           case 401:
+           // Handle 401 Unauthorized (e.g., wrong credentials)
+             responseModel = GeneralResponse(success : false ,message :  "Unauthorized access"  , data : null);
+             print("Unauthorized access");
+             break;
+           case 500:
+           // Handle 500 Internal Server Error
+             print("Internal server error");
+             print(error.response?.data.toString());
+             responseModel = GeneralResponse.fromJson(error.response!.data);
+             // responseModel = LoginResponse(success : false ,message :  "Internal server error"  , data : null);
+
+             break;
+         // ... Handle other status codes as needed
+           default:
+           // Handle unexpected errors
+             responseModel = GeneralResponse(success : false ,message :  "Unexpected error: ${error.message}" , data : null);
+             print("Unexpected error: ${error.message}");
+         }
+       } else {
+         // Handle network errors or other issues
+         print("Network error: ${error.message}");
+         responseModel = GeneralResponse(success : false , message :  "NetworkError" , data : null);
+       }
+     }
+
+     return  responseModel;
+
+   }
+
+
+
+
+   Future<DocumentType>  getDocumentTypes( ) async {
+
+     DocumentType responseModel;
+
+     try {
+       responseModel = await client.getAllDocumentTypes();
+       // Process successful response
+     } on DioException catch (error) {
+       // Handle errors based on status code
+       if (error.response != null) {
+         final statusCode = error.response!.statusCode;
+         switch (statusCode) {
+           case 400:
+           // Handle 400 Bad Request (e.g., invalid email or password)
+           // final parsedError = ErrorResponse.fromJson(error.response!.data);
+             responseModel = DocumentType(success : false ,message :  "Error Occured"  , data : null);
+             //print("Error: ${parsedError.message}");
+             break;
+           case 401:
+           // Handle 401 Unauthorized (e.g., wrong credentials)
+             responseModel = DocumentType(success : false ,message :  "Unauthorized access"  , data : null);
+             print("Unauthorized access");
+             break;
+           case 500:
+           // Handle 500 Internal Server Error
+             print("Internal server error");
+             responseModel = DocumentType.fromJson(error.response!.data);
+             // responseModel = LoginResponse(success : false ,message :  "Internal server error"  , data : null);
+
+             break;
+         // ... Handle other status codes as needed
+           default:
+           // Handle unexpected errors
+             responseModel = DocumentType(success : false ,message :  "Unexpected error: ${error.message}" , data : null);
+             print("Unexpected error: ${error.message}");
+         }
+       } else {
+         // Handle network errors or other issues
+         print("Network error: ${error.message}");
+         responseModel = DocumentType(success : false , message :  "NetworkError" , data : null);
+       }
+     }
 
      return  responseModel;
 

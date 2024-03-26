@@ -135,7 +135,7 @@ class AddCardView extends StackedView<AddCardViewModel>{
 
     // 2. Gather customer billing information (ex. email)
     final billingDetails = BillingDetails(
-      email: "mussadiqc@gmail.com",
+      email: "msaad@traer.pk",
       phone: '+48888000888',
       address: Address(
         city: 'Houston',

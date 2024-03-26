@@ -150,9 +150,13 @@ extension ImageTypeExtension on String {
       return ImageType.network;
     } else if (this.endsWith('.svg')) {
       return ImageType.svg;
+    } else if (this.startsWith('/data')) {
+      return ImageType.file;
     } else if (this.startsWith('file://')) {
       return ImageType.file;
-    } else {
+    } else if (this.startsWith('/storage')) {
+      return ImageType.file;
+    }else {
       return ImageType.png;
     }
   }

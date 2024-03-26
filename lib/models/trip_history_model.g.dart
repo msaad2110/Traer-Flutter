@@ -37,6 +37,9 @@ Data _$DataFromJson(Map<String, dynamic> json) => Data(
       json['updated_at'] as String?,
       json['deleted_by_id'] as String?,
       json['deleted_at'] as String?,
+      json['luggage_type'] == null
+          ? null
+          : LuggageType.fromJson(json['luggage_type'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
@@ -54,4 +57,16 @@ Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
       'updated_at': instance.updated_at,
       'deleted_by_id': instance.deleted_by_id,
       'deleted_at': instance.deleted_at,
+      'luggage_type': instance.luggage_type,
+    };
+
+LuggageType _$LuggageTypeFromJson(Map<String, dynamic> json) => LuggageType(
+      json['id'] as int?,
+      json['name'] as String?,
+    );
+
+Map<String, dynamic> _$LuggageTypeToJson(LuggageType instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
     };

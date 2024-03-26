@@ -67,7 +67,7 @@ class IntroView extends StackedView<IntroViewModel>{
         ),
       ),*/
       globalFooter: SizedBox(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery.sizeOf(context).width,
         height: 60,
         child: buildBottomButton(context),
       ),
@@ -120,7 +120,7 @@ class IntroView extends StackedView<IntroViewModel>{
     return PageViewModel(
       title: "lbl_send_anywhere".tr,
       body: "msg_lorem_ipsum_dolor".tr,
-      image: _buildImage(ImageConstant.imglogin,MediaQuery.of(context).size.width),
+      image: _buildImage(ImageConstant.imglogin,MediaQuery.sizeOf(context).width),
       decoration: pageDecoration,
     );
   }
@@ -130,7 +130,7 @@ class IntroView extends StackedView<IntroViewModel>{
     return PageViewModel(
       title: "lbl_send_anywhere".tr,
       body: "msg_lorem_ipsum_dolor".tr,
-      image: _buildImage(ImageConstant.imgIntro,MediaQuery.of(context).size.width * 0.8),
+      image: _buildImage(ImageConstant.imgIntro,MediaQuery.sizeOf(context).width * 0.8),
       decoration: pageDecoration,
     );
   }
@@ -155,7 +155,7 @@ class IntroView extends StackedView<IntroViewModel>{
                 children: [
                   CustomOutlinedButton(
                       height: 48,
-                      width :MediaQuery.of(context).size.width * 0.4,
+                      width :MediaQuery.sizeOf(context).width * 0.4,
                       text: "lbl_get_started".tr,
                       margin: EdgeInsets.only(left: 5),
                       buttonStyle: CustomButtonStyles.outlinePrimaryTL101,
@@ -165,7 +165,7 @@ class IntroView extends StackedView<IntroViewModel>{
                       }),
               CustomOutlinedButton(
                   height: 48,
-                  width :MediaQuery.of(context).size.width * 0.4,
+                  width :MediaQuery.sizeOf(context).width * 0.4,
                   text: "lbl_sign_in".tr,
                   margin: EdgeInsets.only(left: 5),
                   buttonStyle: CustomButtonStyles.outlinePrimaryTL10,

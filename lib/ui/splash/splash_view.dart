@@ -39,7 +39,7 @@ class SplashView extends StackedView<SplashViewModel>{
               padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: Center(
               child: CustomImageView(
-              imagePath: ImageConstant.imgLogo, width: MediaQuery.of(context).size.width * 0.6,fit: BoxFit.fill,
+              imagePath: ImageConstant.imgLogo, width: MediaQuery.sizeOf(context).width * 0.6,fit: BoxFit.fill,
 
                )
 

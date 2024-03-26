@@ -45,6 +45,9 @@ final Map<String, String> enUs = {
   "msg_please_provide_us2":
       "Please provide us with a good photo of your ID card. Make sure to capture both sides and photograph the ",
 
+
+
+
   // Face Verification Screen
   "msg_please_provide_us3":
       "Please provide us with a good photo of yourself. Make sure to capture a photo in a well lit room and without any hats or accessories at all.",
@@ -370,6 +373,7 @@ final Map<String, String> enUs = {
   "lbl_orders": "Orders",
   "lbl_par_khi": "PAR - KHI",
   "lbl_password": "Password",
+  "lbl_old_password": "Old Password",
   "lbl_password123": "Password123@",
   "lbl_past": "Past",
   "lbl_payment": "Payment",

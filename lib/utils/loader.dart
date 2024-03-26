@@ -20,8 +20,8 @@ class AppLoader{
 
    return Container(
        color : Colors.black.withOpacity(0.1),
-       height : MediaQuery.of(context).size.height,
-       width : MediaQuery.of(context).size.width,
+       height : MediaQuery.sizeOf(context).height,
+       width : MediaQuery.sizeOf(context).width,
        child: Center(child: SizedBox(height: 200,width: 200,child: Image.asset('assets/inspire_logo_gif.gif'))));
 
  }

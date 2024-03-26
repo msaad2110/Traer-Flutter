@@ -207,7 +207,7 @@ class SignUpView extends StackedView<SignupViewModel>{
   Widget _buildFirstNameField(BuildContext context , SignupViewModel viewModel) {
 
     return Container(
-      width: MediaQuery.of(context).size.width * 0.45,
+      width: MediaQuery.sizeOf(context).width * 0.45,
       margin: EdgeInsets.only( right: 9),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: AppDecoration.fillGray10001
@@ -229,7 +229,7 @@ class SignUpView extends StackedView<SignupViewModel>{
   /// Section Widget
   Widget _buildLastNameField(BuildContext context, SignupViewModel viewModel) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.45,
+      width: MediaQuery.sizeOf(context).width * 0.45,
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: AppDecoration.fillGray10001
           .copyWith(borderRadius: BorderRadiusStyle.circleBorder12),
@@ -280,7 +280,7 @@ class SignUpView extends StackedView<SignupViewModel>{
   /// Section Widget
   Widget _buildCountrySelectionrField(BuildContext context,SignupViewModel viewModel) {
     return  Container(
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery.sizeOf(context).width,
 
       child: CountryCodePicker(
         padding: EdgeInsets.only(right: 0),

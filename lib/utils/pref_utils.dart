@@ -3,7 +3,11 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stacked_services/stacked_services.dart';
+import 'package:traer/base/app_setup.locator.dart';
+import 'package:traer/base/app_setup.router.dart';
 import 'package:traer/models/login_response.dart';
+import 'package:traer/models/user_data_holder.dart';
 
 class PrefUtils {
   static SharedPreferences? _sharedPreferences;
@@ -26,7 +30,9 @@ class PrefUtils {
 
   ///will clear all the data stored in preference
   void clearPreferencesData() async {
-    _sharedPreferences!.clear();
+   // _sharedPreferences!.clear();
+    _sharedPreferences!.remove(userData);
+    _sharedPreferences!.remove(token);
   }
 
   Future<void> setThemeData(String value) {
@@ -109,5 +115,15 @@ class PrefUtils {
       return false;
     }
   }
+
+  void  switchUser(){
+    if(UserDataHolder.getInstance().loginData?.data?.user?.is_traveller == 0){
+      locator<NavigationService>().clearStackAndShow(Routes.mainView);
+    }else{
+      locator<NavigationService>().clearStackAndShow(Routes.mainView);
+    }
+
+  }
+
 }
     

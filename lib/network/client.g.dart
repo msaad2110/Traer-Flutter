@@ -400,9 +400,26 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<TripHistoryModel> getAllTrips(int userid) async {
+  Future<TripHistoryModel> getAllTrips(
+    int userid,
+    String? start_date,
+    String? end_date,
+    int? luggage_space,
+    String? travelling_from,
+    int? commission_start,
+    int? commission_end,
+  ) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'user_id': userid};
+    final queryParameters = <String, dynamic>{
+      r'user_id': userid,
+      r'start_date': start_date,
+      r'end_date': end_date,
+      r'luggage_space': luggage_space,
+      r'travelling_from': travelling_from,
+      r'commission_start': commission_start,
+      r'commission_end': commission_end,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio
@@ -450,6 +467,351 @@ class _ApiService implements ApiService {
               baseUrl,
             ))));
     final value = StripeCreateIntent.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GeneralResponse> updateTrip(
+    int id,
+    int user_id,
+    int luggage_type_id,
+    String travelling_from,
+    String travelling_to,
+    String start_date,
+    String end_date,
+    int commission,
+    int luggage_space,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'user_id': user_id,
+      r'luggage_type_id': luggage_type_id,
+      r'travelling_from': travelling_from,
+      r'travelling_to': travelling_to,
+      r'start_date': start_date,
+      r'end_date': end_date,
+      r'commission': commission,
+      r'luggage_space': luggage_space,
+    };
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<GeneralResponse>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'api/trips/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = GeneralResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GeneralResponse> deleteTrip(
+    int id,
+    int user_id,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'user_id': user_id};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<GeneralResponse>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'api/trips/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = GeneralResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GeneralResponse> resetPassword(
+    String email,
+    String password,
+    String password_confirmation,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry(
+      'email',
+      email,
+    ));
+    _data.fields.add(MapEntry(
+      'password',
+      password,
+    ));
+    _data.fields.add(MapEntry(
+      'password_confirmation',
+      password_confirmation,
+    ));
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<GeneralResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'api/reset-password',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = GeneralResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GeneralResponse> sendOTP(String email) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry(
+      'email',
+      email,
+    ));
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<GeneralResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'api/forgot-password',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = GeneralResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GeneralResponse> verifyOTP(
+    String email,
+    String otp,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry(
+      'email',
+      email,
+    ));
+    _data.fields.add(MapEntry(
+      'otp',
+      otp,
+    ));
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<GeneralResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'api/verify-otp',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = GeneralResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GeneralResponse> changePassword(
+    int id,
+    String action,
+    String password,
+    String password_confirmation,
+    String old_password,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'action': action,
+      r'password': password,
+      r'password_confirmation': password_confirmation,
+      r'old_password': old_password,
+    };
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<GeneralResponse>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'api/users/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = GeneralResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GeneralResponse> updateProfile(
+    int id,
+    String first_name,
+    String last_name,
+    String email,
+    String phone,
+    String action,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'first_name': first_name,
+      r'last_name': last_name,
+      r'email': email,
+      r'phone': phone,
+      r'action': action,
+    };
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<GeneralResponse>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'api/users/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = GeneralResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GeneralResponse> uploadProfilePicture(
+    int user_id,
+    String action,
+    int document_type_id,
+    File attachments,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry(
+      'user_id',
+      user_id.toString(),
+    ));
+    _data.fields.add(MapEntry(
+      'action',
+      action,
+    ));
+    _data.fields.add(MapEntry(
+      'document_type_id',
+      document_type_id.toString(),
+    ));
+    _data.files.add(MapEntry(
+      'attachments',
+      MultipartFile.fromFileSync(
+        attachments.path,
+        filename: attachments.path.split(Platform.pathSeparator).last,
+      ),
+    ));
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<GeneralResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+            .compose(
+              _dio.options,
+              'api/media',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = GeneralResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<DocumentType> getAllDocumentTypes() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<DocumentType>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'api/document-types',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = DocumentType.fromJson(_result.data!);
     return value;
   }
 

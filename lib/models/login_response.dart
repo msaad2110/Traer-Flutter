@@ -39,18 +39,29 @@ class User {
   String? created_at;
   String? updated_at;
   int? is_traveller;
+  int? is_verified;
+  String? stripe_id;
+  String? pm_type;
+  String? pm_last_four;
+  String? trial_ends_at;
+
 
   User(
-      { this.id,
-         this.first_name,
-          this.last_name,
-         this.email,
-         this.phone,
-         this.country,
-         this.email_verified_at,
-         this.created_at,
-         this.updated_at,
-         this.is_traveller});
+      this.id,
+      this.first_name,
+      this.last_name,
+      this.email,
+      this.phone,
+      this.country,
+      this.email_verified_at,
+      this.created_at,
+      this.updated_at,
+      this.is_traveller,
+      this.is_verified,
+      this.stripe_id,
+      this.pm_type,
+      this.pm_last_four,
+      this.trial_ends_at);
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   Map<String, dynamic> toJson() => _$UserToJson(this);

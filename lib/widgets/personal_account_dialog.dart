@@ -6,6 +6,7 @@ import 'package:traer/localization/app_localization.dart';
 import 'package:traer/provider/app_decoration.dart';
 import 'package:traer/provider/custom_button_style.dart';
 import 'package:traer/provider/custom_text_style.dart';
+import 'package:traer/utils/pref_utils.dart';
 import 'package:traer/widgets/custom_elevated_button.dart';
 import 'package:traer/widgets/custom_outlined_button.dart';
 
@@ -70,6 +71,7 @@ class PersonalAccountDialogState extends State<PersonalAccountDialog> {
   }
 
   onTapLogout(BuildContext context) {
+    PrefUtils().clearPreferencesData();
     locator<NavigationService>().clearStackAndShow(Routes.loginView);
     // TODO: implement Actions
   }

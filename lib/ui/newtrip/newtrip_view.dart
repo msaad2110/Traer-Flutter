@@ -69,7 +69,7 @@ class NewTripView extends StackedView<NewTripViewModel>{
   }
 
   @override
-  bool get reactive => false;
+  bool get reactive => super.reactive;
 
 
   Widget mainView(BuildContext context , NewTripViewModel viewModel){
@@ -357,7 +357,7 @@ class NewTripDestinationCountryScreen extends StackedView<NewTripDestinationCoun
   }
 
   @override
-  bool get reactive => false;
+  bool get reactive => super.reactive;
 
 
 
@@ -616,7 +616,7 @@ class NewTripOriginCountryScreen extends StackedView<NewTripOriginCountryViewMod
   }
 
   @override
-  bool get reactive => false;
+  bool get reactive => super.reactive;
 
 
   Widget _originCountrySelectionSecreen(BuildContext context , NewTripOriginCountryViewModel viewModel) {
@@ -872,7 +872,7 @@ class NewTripDestinationStateScreen extends StackedView<NewTripDestinationStateV
   }
 
   @override
-  bool get reactive => false;
+  bool get reactive => super.reactive;
 
   Widget _destinationStateSelectionSecreen(BuildContext context , NewTripDestinationStateViewModel viewModel) {
 
@@ -1132,7 +1132,7 @@ class NewTripOriginStateScreen extends StackedView<NewTripOriginStateViewModel>{
   }
 
   @override
-  bool get reactive => false;
+  bool get reactive => super.reactive;
 
 
   Widget _originStateSelectionSecreen(BuildContext context , NewTripOriginStateViewModel viewModel) {
@@ -1389,7 +1389,7 @@ class NewTripDestinationCityScreen extends StackedView<NewTripDestinationCityVie
   }
 
   @override
-  bool get reactive => false;
+  bool get reactive => super.reactive;
 
   Widget _destinationCitySelectionSecreen(BuildContext context , NewTripDestinationCityViewModel viewModel) {
 
@@ -1646,7 +1646,7 @@ class NewTripOriginCityScreen extends StackedView<NewTripOriginCityViewModel> {
   }
 
   @override
-  bool get reactive => false;
+  bool get reactive => super.reactive;
 
 
   Widget _originCitySelectionSecreen(BuildContext context , NewTripOriginCityViewModel viewModel) {
@@ -1905,7 +1905,7 @@ class NewTripDatePickerScreen extends StackedView<NewTripDatePickerViewModel> {
   }
 
   @override
-  bool get reactive => false;
+  bool get reactive => super.reactive;
 
   Widget datePicker(BuildContext context , NewTripDatePickerViewModel viewModel){
     return PopScope(
@@ -2003,7 +2003,7 @@ class NewTripFormScreen extends StackedView<NewTripFormViewModel> {
   }
 
   @override
-  bool get reactive => false;
+  bool get reactive => super.reactive;
 
   @override
   void onViewModelReady(NewTripFormViewModel viewModel) {

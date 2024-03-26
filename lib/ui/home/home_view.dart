@@ -30,6 +30,7 @@ class HomeView extends StackedView<HomeViewModel>{
 
   @override
   Widget builder(BuildContext context, HomeViewModel viewModel, Widget? child) {
+    print("homeview rebuild");
     return SafeArea(
         child: Scaffold(
             appBar: _buildAppBar(context,viewModel),
@@ -135,12 +136,6 @@ class HomeView extends StackedView<HomeViewModel>{
     );
   }
 
-  @override
-  void onDispose(HomeViewModel viewModel) {
-    viewModel.dispose(); // Dispose of the ViewModel
-    super.onDispose(viewModel);
-  }
-
 
 
 
@@ -151,11 +146,11 @@ class HomeView extends StackedView<HomeViewModel>{
   }
 
   @override
-  bool get reactive => false;
+  bool get reactive => super.reactive;
 
   Widget newOder( BuildContext context){
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.42,
+      width: MediaQuery.sizeOf(context).width * 0.42,
       child: GestureDetector(
         onTap: () {
           locator<NavigationService>().navigateTo(Routes.newOrderView);
@@ -194,7 +189,7 @@ class HomeView extends StackedView<HomeViewModel>{
 
   Widget newTrip(BuildContext context , HomeViewModel viewModel ){
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.42,
+      width: MediaQuery.sizeOf(context).width * 0.42,
       child: GestureDetector(
         onTap: () {
             locator<NavigationService>().navigateTo(Routes.newTripView);
@@ -233,7 +228,7 @@ class HomeView extends StackedView<HomeViewModel>{
 
   Widget _buildOrderComponent(BuildContext context , HomeViewModel viewModel) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.9,
+      width: MediaQuery.sizeOf(context).width * 0.9,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -289,7 +284,7 @@ class HomeView extends StackedView<HomeViewModel>{
           children: [
         Text("lbl_recent_trips".tr, style: CustomTextStyles.titleMediumBlack90018),
         CustomOutlinedButton(
-            width: MediaQuery.of(context).size.width * 0.26,
+            width: MediaQuery.sizeOf(context).width * 0.26,
             text: "lbl_see_all".tr,
             margin: EdgeInsets.only(bottom: 4),
             onPressed: () {

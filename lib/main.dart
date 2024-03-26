@@ -1,3 +1,4 @@
+import 'package:face_camera/face_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -15,6 +16,7 @@ void main() async {
   Stripe.publishableKey = "pk_test_51NSSLKIhgCooPLemRL3Wbm7HRoFjV14PlewzLTvuUwCcdGkeXt5goHViWkW47UIm3F2oaHUCMxvBrh0cAJfpkwRX00N9habFs5";
   await Stripe.instance.applySettings();
   await setupLocator();
+  await FaceCamera.initialize();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
       statusBarColor: ColorsField.whiteColor, // Color for Android
       statusBarBrightness: Brightness.dark // Dark == white status bar -- for IOS.
@@ -32,4 +34,8 @@ void main() async {
   ));*/
  // runApp(const AppView());
 }
+
+//https://medium.com/unitechie/flutter-tutorial-image-picker-from-camera-gallery-c27af5490b74
+
+
 

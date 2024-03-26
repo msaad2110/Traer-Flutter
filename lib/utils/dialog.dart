@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:traer/utils/appstrings.dart';
 import 'package:traer/utils/colorfield.dart';
 import 'package:traer/utils/customtextstyle.dart';
+import 'package:traer/utils/document_upload_bottomsheet.dart';
 
 
 class CustomDialog{
@@ -25,7 +26,7 @@ class CustomDialog{
               TextButton(
                   onPressed:  (){
                     onPressedDialog();
-                    Navigator.pop(context);
+                    //Navigator.pop(context);
                   }, child: Text("OK",style: CustomTextStyle.customStyle(16.0, ColorsField.blackColor, FontWeight.normal),))
 
             ],
@@ -142,15 +143,13 @@ class CustomDialog{
 
   }
 
-
-
  static Widget gotoHomeButton(BuildContext context , Function() onPressed , String buttonText){
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
         margin: EdgeInsets.only(left: 10.0,right: 10.0),
         child: SizedBox(
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery.sizeOf(context).width,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Stack(
@@ -186,5 +185,11 @@ class CustomDialog{
     );
   }
 
-
+  static void showDocumentUploadBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,
+      builder: (context) => DocumentUploadBottomSheet(),
+    );
+  }
 }

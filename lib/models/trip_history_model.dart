@@ -30,6 +30,8 @@ class Data {
   String? updated_at;
   String? deleted_by_id;
   String? deleted_at;
+  LuggageType? luggage_type;
+
 
   Data(
       this.id,
@@ -45,8 +47,21 @@ class Data {
       this.created_at,
       this.updated_at,
       this.deleted_by_id,
-      this.deleted_at);
+      this.deleted_at,
+      this.luggage_type);
 
   factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
   Map<String, dynamic> toJson() => _$DataToJson(this);
+}
+
+@JsonSerializable()
+class LuggageType {
+  int? id;
+  String? name;
+
+
+  LuggageType(this.id, this.name);
+
+  factory LuggageType.fromJson(Map<String, dynamic> json) => _$LuggageTypeFromJson(json);
+  Map<String, dynamic> toJson() => _$LuggageTypeToJson(this);
 }
