@@ -90,6 +90,10 @@ class SignupViewModel extends BaseViewModel{
     if(value!.isEmpty){
       return "please enter password";
     }
+
+    if(value!.length < 6 ){
+      return "password should be greater than  6";
+    }
     return null;
   }
 

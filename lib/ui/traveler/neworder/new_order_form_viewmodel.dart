@@ -101,9 +101,9 @@ class NewOrderFormViewModel extends BaseViewModel{
   }
 
   Future<GeneralResponse>  newOrder( int user_id ,  int luggage_type_id,   int tripid,
-      String description,  int productSpace,   int productValue) async {
+      String description,  int productSpace,   int productValue , String customer_email) async {
 
-    GeneralResponse responseModel = await service.newOrder(user_id,luggage_type_id,tripid,description,productSpace,productValue);
+    GeneralResponse responseModel = await service.newOrder(user_id,luggage_type_id,tripid,description,productSpace,productValue,customer_email);
 
     return  responseModel;
 

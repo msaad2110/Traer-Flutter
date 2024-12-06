@@ -8,6 +8,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:traer/base/app_setup.locator.dart';
+import 'package:traer/base/app_setup.router.dart';
 import 'package:traer/localization/app_localization.dart';
 import 'package:traer/models/user_data_holder.dart';
 import 'package:traer/provider/app_decoration.dart';
@@ -60,7 +61,6 @@ class OrderHistoryViewState extends State<OrderHistoryView> with TickerProviderS
               resizeToAvoidBottomInset: false,
               appBar: _buildAppBar(context),
               body: SizedBox(
-
                 width: double.maxFinite,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,7 +182,7 @@ class AllOrdersScreen extends StackedView<AllOrdersViewModel>{
 
   FutureBuilder<orderModel.OrderHistoryModel> getAllOrders(AllOrdersViewModel viewModel){
     return FutureBuilder(
-        future: viewModel.getAllOrders(UserDataHolder.getInstance().loginData?.data?.user?.id ?? 0),
+        future: viewModel.getAllOrders(UserDataHolder.getInstance().loginData?.data?.user?.id ?? 0,UserDataHolder.getInstance().userCurrentStatus ?? 1),
         builder: (context , snapshot){
           if (snapshot.hasData) {
             viewModel.allFoundOrders.value = (snapshot.data!.data ?? []);
@@ -323,9 +323,12 @@ class AllOrdersScreen extends StackedView<AllOrdersViewModel>{
 
     return InkWell(
       onTap: () {
+        locator<NavigationService>().navigateTo(Routes.orderStatusView,arguments: OrderStatusViewArguments(orderID: dataSource.id ?? 0));
       },
       child: Wrap(
-        children: [Container(
+        children: [
+
+          Container(
           margin: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
       padding: EdgeInsets.symmetric(
         horizontal: 15,

@@ -43,7 +43,7 @@ class AccountView extends StackedView<AccountViewModel>{
                     _buildFrameTwentyEight(context,
                         linearMessagesImage: ImageConstant.imgLinearMoneyCard,
                         supportText: "lbl_payment".tr,onTapFrameTwentyEight: (){
-                          locator<NavigationService>().navigateTo(Routes.addCardView);
+                          locator<NavigationService>().navigateTo(Routes.cardslistView);
                         }),
                     SizedBox(height: 10),
                     _buildFrameTwentyEight(context,
@@ -54,11 +54,11 @@ class AccountView extends StackedView<AccountViewModel>{
                         linearMessagesImage: ImageConstant.imgLinearMessages,
                         supportText: "lbl_support".tr),
                     SizedBox(height: 10),
-                    _buildFrameTwentyEight(context, linearMessagesImage: ImageConstant.imgLinearArrows, supportText: "lbl_change_passcode".tr, onTapFrameTwentyEight: () {
+                    _buildFrameTwentyEight(context, linearMessagesImage: ImageConstant.imgPassword, supportText: "lbl_change_passcode".tr, onTapFrameTwentyEight: () {
                       locator<NavigationService>().navigateTo(Routes.changePasswordView);
                     }),
                     SizedBox(height: 10),
-                    _buildFrameTwentyEight(context, linearMessagesImage: ImageConstant.imgLinearArrows, supportText: "Upload Documents".tr, onTapFrameTwentyEight: () {
+                    _buildFrameTwentyEight(context, linearMessagesImage: ImageConstant.imgDocument, supportText: "Upload Documents".tr, onTapFrameTwentyEight: () {
                       locator<NavigationService>().navigateTo(Routes.uploadDocumentView);
                     }),
                     SizedBox(height: 10),
@@ -115,7 +115,7 @@ class AccountView extends StackedView<AccountViewModel>{
                   padding: EdgeInsets.only(bottom: 2),
                   child: Column(children: [
                     CustomImageView(
-                        imagePath: ImageConstant.imgUnsplash3jmfencl24m,
+                        imagePath: viewModel.loginResponse?.data?.user?.profile_picture?.file_preview_path == null ?  ImageConstant.imgUnsplash3jmfencl24m : viewModel.loginResponse?.data?.user?.profile_picture?.file_preview_path ,
                         height: 77,
                         width: 77,
                         radius: BorderRadius.circular(38)),
@@ -148,6 +148,7 @@ class AccountView extends StackedView<AccountViewModel>{
   onTapBtnEdit() {
    locator<NavigationService>().navigateTo(Routes.editProfileView);
   }
+
   Widget _buildFrameTwentyEight(
       BuildContext context, {
         required String linearMessagesImage,

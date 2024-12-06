@@ -9,6 +9,7 @@ import 'package:stacked/stacked.dart';
 import 'package:traer/base/app_setup.locator.dart';
 import 'package:traer/models/document_types.dart' as documentTypes;
 import 'package:traer/models/documents.dart';
+import 'package:traer/models/general_response.dart';
 import 'package:traer/network/restservice.dart';
 
 class UploadDocumentViewModel extends BaseViewModel{
@@ -26,6 +27,8 @@ class UploadDocumentViewModel extends BaseViewModel{
     return  responseModel;
 
   }
+
+
 
   void setCurrentIndex(int index) {
     currentIndex = index;

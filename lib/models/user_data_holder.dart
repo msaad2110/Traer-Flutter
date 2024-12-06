@@ -5,6 +5,7 @@ import 'package:traer/models/login_response.dart';
 class UserDataHolder{
 
   LoginResponse? _loginData;
+  int? _userCurrentStatus;
 
 
   static final UserDataHolder _instance = UserDataHolder._internal();
@@ -20,8 +21,16 @@ class UserDataHolder{
     _loginData = value;
   }
 
-  // Clear the login data
+
+  int? get userCurrentStatus => _userCurrentStatus;
+
+  set userCurrentStatus(int? value) {
+    _userCurrentStatus = value;
+  } // Clear the login data
+
+
   void clearLoginData() {
     _loginData = null;
+    _userCurrentStatus = null;
   }
 }

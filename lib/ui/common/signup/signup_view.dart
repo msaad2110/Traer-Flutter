@@ -27,7 +27,9 @@ import 'package:traer/widgets/custom_image_view.dart';
 import 'package:traer/widgets/custom_loader.dart';
 import 'package:traer/widgets/custom_outlined_button.dart';
 import 'package:traer/widgets/custom_progressbar.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
 class SignUpView extends StackedView<SignupViewModel>{
 
@@ -477,7 +479,7 @@ class SignUpView extends StackedView<SignupViewModel>{
   }
 
   /// Navigates to the idVerificationScreen when the action is triggered.
-  onTapCreateAnAccountButton(BuildContext context , SignupViewModel viewModel) {
+  onTapCreateAnAccountButton(BuildContext context , SignupViewModel viewModel){
 
     print(viewModel.firstNameFieldController.text);
     print(viewModel.lastNameFieldController.text);
@@ -490,14 +492,54 @@ class SignUpView extends StackedView<SignupViewModel>{
     CustomLoader.showLoader(context);
     viewModel.userRegister(viewModel.firstNameFieldController.text, viewModel.lastNameFieldController.text,
         viewModel.selectedCountry,viewModel.phoneNumberFieldController.text,viewModel.emailFieldController.text,
-        viewModel.passwordFieldController.text,viewModel.passwordConfirmController.text , viewModel.isJoinTraveler == true ? "1" : "0").then((value){
+        viewModel.passwordFieldController.text,viewModel.passwordConfirmController.text , viewModel.isJoinTraveler == true ? "1" : "0").then((value) async {
       print(value);
-      CustomLoader.hideLoader(context);
+
       if(value.success ?? false){
-        CustomDialog.showSuccessDialog(context,message: value.message ?? "" , onPressedDialog: (){
-          locator<NavigationService>().navigateTo(Routes.loginView);
-        });
+        try {
+          var email = viewModel.emailFieldController.text;
+          final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: viewModel.emailFieldController.text,
+            password: viewModel.passwordFieldController.text,
+          );
+
+
+          final Map<String, String> metaData = { "email" : viewModel.emailFieldController.text };
+          await FirebaseChatCore.instance.createUserInFirestore(
+            types.User(
+              firstName: viewModel.firstNameFieldController.text,
+              id: credential.user!.uid,
+              imageUrl: 'https://i.pravatar.cc/300?u=$email',
+              lastName: viewModel.lastNameFieldController.text,
+              metadata: metaData,
+            ),
+          );
+          CustomLoader.hideLoader(context);
+          CustomDialog.showSuccessDialog(context,message: value.message ?? "" , onPressedDialog: (){
+            locator<NavigationService>().navigateTo(Routes.loginView);
+          });
+        } catch (e) {
+          CustomLoader.hideLoader(context);
+          await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+            content: Text(
+              e.toString(),
+            ),
+            title: const Text('Error'),
+          ),
+          );
+        }
           }else{
+        CustomLoader.hideLoader(context);
         CustomDialog.showErrorDialog(context,message: value.message ?? "", onPressedDialog: (){
           Navigator.pop(context);
         });

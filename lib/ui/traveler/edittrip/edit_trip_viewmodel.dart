@@ -24,9 +24,9 @@ class EditTripViewModel extends BaseViewModel{
   }
 
 
-  Future<GeneralResponse>  updateTrip( int tripID , int user_id ,  int luggage_type_id,   String travelling_from, String travelling_to,  String start_date,   String end_date,  int luggage_space , int commission) async {
+  Future<GeneralResponse>  updateTrip( int tripID , int user_id ,  int luggage_type_id,   String travelling_from, String travelling_to,  String start_date,   String end_date,  int luggage_space , int commission ,String start_time,   String end_time) async {
 
-    GeneralResponse responseModel = await service.updateTrip(tripID,user_id,luggage_type_id,travelling_from,travelling_to,start_date,end_date,commission,luggage_space);
+    GeneralResponse responseModel = await service.updateTrip(tripID,user_id,luggage_type_id,travelling_from,travelling_to,start_date,end_date,commission,luggage_space,start_time,end_time);
 
     return  responseModel;
 

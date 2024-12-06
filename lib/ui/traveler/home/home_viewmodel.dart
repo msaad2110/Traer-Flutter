@@ -20,14 +20,15 @@ class HomeViewModel extends BaseViewModel{
   updateSlected(bool selected){
     isSelected = selected;
     //notifyListeners();
+    UserDataHolder.getInstance().userCurrentStatus = 0;
     locator<NavigationService>().navigateTo(Routes.customerMainView);
   }
 
 
   Future<TripHistoryModel>  getRecentTrips( int userid ,String? startDate , String? endDate ,
-      int? luggageSpace , String? from , int? commissionStart , int? commissionEnd ) async {
+      int? luggageSpace , String? from , int? commissionStart , int? commissionEnd , int? is_traveler) async {
 
-    TripHistoryModel responseModel = await service.getAllTrips(userid,startDate,endDate,luggageSpace,from,commissionStart,commissionEnd);
+    TripHistoryModel responseModel = await service.getAllTrips(userid,startDate,endDate,luggageSpace,from,commissionStart,commissionEnd,is_traveler);
 
     return  responseModel;
 

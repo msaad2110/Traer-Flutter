@@ -308,7 +308,9 @@ class EditTripView extends StackedView<EditTripViewModel>{
         DateFormat('yyyy-MM-dd').format(EditTripData.getInstance().startDate ?? DateTime.now()),
         DateFormat('yyyy-MM-dd').format(EditTripData.getInstance().endDateDate ?? DateTime.now()),
         int.parse(EditTripData.getInstance().commission ?? "0"),
-        int.parse(EditTripData.getInstance().luggageSpace ?? "0")
+        int.parse(EditTripData.getInstance().luggageSpace ?? "0"),
+      DateFormat('hh:mm:ss').format(EditTripData.getInstance().startDate ?? DateTime.now()),
+      DateFormat('hh:mm:ss').format(EditTripData.getInstance().endDateDate ?? DateTime.now()),
     ).then((value){
       CustomLoader.hideLoader(context);
 
@@ -440,7 +442,6 @@ class EditTripDestinationCountryScreen extends StackedView<EditTripDestinationCo
             return(Text(snapshot.error.toString()));
           } else {
             return showShimmer(context);
-
           }
         });
   }

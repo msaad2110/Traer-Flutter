@@ -123,7 +123,7 @@ class EditProfileView extends StackedView<EditProfileViewModel>{
                                         ); // Display the image if it's available
                                       } else {
                                        return CustomImageView(
-                                          imagePath: ImageConstant.imgUnsplash3jmfencl24m77x77,
+                                          imagePath: UserDataHolder.getInstance().loginData?.data?.user?.profile_picture?.file_preview_path == null ?  ImageConstant.imgUnsplash3jmfencl24m77x77 : UserDataHolder.getInstance().loginData?.data?.user?.profile_picture?.file_preview_path ,
                                           height: 77,
                                           width: 77,
                                           radius: BorderRadius.circular(

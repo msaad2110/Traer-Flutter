@@ -26,9 +26,9 @@ class NewTripViewModel extends BaseViewModel{
   }
 
 
-  Future<GeneralResponse>  newTrip( int user_id ,  int luggage_type_id,   String travelling_from, String travelling_to,  String start_date,   String end_date,  int luggage_space , int commission) async {
+  Future<GeneralResponse>  newTrip( int user_id ,  int luggage_type_id,   String travelling_from, String travelling_to,  String start_date,   String end_date,  int luggage_space , int commission ,  String start_time,   String end_time) async {
 
-    GeneralResponse responseModel = await service.newTrip(user_id,luggage_type_id,travelling_from,travelling_to,start_date,end_date,luggage_space , commission);
+    GeneralResponse responseModel = await service.newTrip(user_id,luggage_type_id,travelling_from,travelling_to,start_date,end_date,luggage_space , commission , start_time , end_time);
 
     return  responseModel;
 

@@ -93,4 +93,24 @@ extension IconButtonStyleHelper on CustomIconButton {
         color: appTheme.black900.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
       );
+
+  static BoxDecoration get outlineBlack => BoxDecoration(
+    color: appTheme.whiteA700,
+    borderRadius: BorderRadius.circular(18),
+    border: Border.all(
+      color: appTheme.black900.withOpacity(0.5),
+      width: 1,
+    ),
+    boxShadow: [
+      BoxShadow(
+        color: appTheme.black900.withOpacity(0.25),
+        spreadRadius: 2,
+        blurRadius: 2,
+        offset: Offset(
+          0,
+          4,
+        ),
+      ),
+    ],
+  );
 }

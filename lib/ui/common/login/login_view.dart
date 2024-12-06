@@ -1,10 +1,14 @@
 
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:stacked/stacked.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:traer/base/app_setup.locator.dart';
 import 'package:traer/base/app_setup.router.dart';
@@ -245,14 +249,46 @@ class LoginView extends StackedView<LoginViewModel>{
     CustomLoader.showLoader(context);
   //  viewModel.login("shaheerzaeem26@gmail.com", "test_password").then((value){
     viewModel.login(viewModel.emailController.text, viewModel.passwordController.text).then((value) async{
-      CustomLoader.hideLoader(context);
 
       if(value.success ?? false){
-        await PrefUtils().save(PrefUtils.token, value.data!.token);
-        isSaveUserData(value);
-        viewModel.updateToken();
-        locator<NavigationService>().pushNamedAndRemoveUntil(Routes.mainView);
+
+        try {
+          final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: viewModel.emailController.text.trim(),
+            password: viewModel.passwordController.text.trim(),
+          );
+
+          print(credential);
+          CustomLoader.hideLoader(context);
+          await PrefUtils().save(PrefUtils.token, value.data!.token);
+          isSaveUserData(value);
+          viewModel.updateToken();
+          locator<NavigationService>().pushNamedAndRemoveUntil(Routes.mainView);
+        } catch (e) {
+          /*print("mussadiq");
+          print(e.toString());*/
+          CustomLoader.hideLoader(context);
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+              content: Text(
+                e.toString(),
+              ),
+              title: const Text('Error'),
+            ),
+          );
+        }
+
       }else{
+        CustomLoader.hideLoader(context);
         CustomDialog.showErrorDialog(context,message: value.message ?? "" , onPressedDialog: (){
           Navigator.pop(context);
         });
@@ -338,10 +374,14 @@ class LoginView extends StackedView<LoginViewModel>{
       print("remembered");
       await PrefUtils().save(PrefUtils.userData, loginResponse);
       UserDataHolder.getInstance().loginData = await LoginResponse.fromJson(await PrefUtils().read(PrefUtils.userData));
+      UserDataHolder.getInstance().userCurrentStatus = loginResponse.data?.user?.is_traveller;
+
 
     }else{
       print("not remembered");
       UserDataHolder.getInstance().loginData = loginResponse;
+      UserDataHolder.getInstance().userCurrentStatus = loginResponse.data?.user?.is_traveller;
+
     }
 
 

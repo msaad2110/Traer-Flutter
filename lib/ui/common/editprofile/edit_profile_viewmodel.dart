@@ -23,10 +23,10 @@ class EditProfileViewModel extends BaseViewModel{
 
   final picker = ImagePicker();
 
-  TextEditingController firstNameFieldController = TextEditingController();
-  TextEditingController lastNameFieldController = TextEditingController();
-  TextEditingController emailFieldController = TextEditingController();
-  TextEditingController phoneNumberFieldController = TextEditingController();
+  TextEditingController firstNameFieldController = TextEditingController(text: UserDataHolder.getInstance().loginData?.data?.user?.first_name);
+  TextEditingController lastNameFieldController = TextEditingController(text: UserDataHolder.getInstance().loginData?.data?.user?.last_name);
+  TextEditingController emailFieldController = TextEditingController(text: UserDataHolder.getInstance().loginData?.data?.user?.email);
+  TextEditingController phoneNumberFieldController = TextEditingController(text: UserDataHolder.getInstance().loginData?.data?.user?.phone);
   FocusNode focusNodeFName = FocusNode();
   FocusNode focusNodeLName = FocusNode();
   FocusNode focusNodeEmail = FocusNode();

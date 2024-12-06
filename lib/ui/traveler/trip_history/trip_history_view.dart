@@ -177,7 +177,7 @@ class _TripHistoryViewState extends State<TripHistoryView> with TickerProviderSt
 
     FutureBuilder<tripModel.TripHistoryModel> getAllTrips(TripHistoryViewModel viewModel , int userID){
       return FutureBuilder(
-          future: viewModel.getRecentTrips(userID,null,null,null,null,null,null),
+          future: viewModel.getRecentTrips(userID,null,null,null,null,null,null,UserDataHolder.getInstance().userCurrentStatus),
           builder: (context , snapshot){
             if (snapshot.hasData) {
               print("destination countries call");
@@ -271,7 +271,7 @@ class _TripHistoryViewState extends State<TripHistoryView> with TickerProviderSt
 
     FutureBuilder<tripModel.TripHistoryModel> getScheduledTrips(TripHistoryViewModel viewModel , int userID){
       return FutureBuilder(
-          future: viewModel.getRecentTrips(userID,null,null,null,null,null,null),
+          future: viewModel.getRecentTrips(userID,null,null,null,null,null,null,UserDataHolder.getInstance().userCurrentStatus),
           builder: (context , snapshot){
             if (snapshot.hasData) {
               print("destination countries call");
@@ -343,7 +343,7 @@ class _TripHistoryViewState extends State<TripHistoryView> with TickerProviderSt
 
     FutureBuilder<tripModel.TripHistoryModel> getPastTrips(TripHistoryViewModel viewModel , int userID){
       return FutureBuilder(
-          future: viewModel.getRecentTrips(userID,null,null,null,null,null,null),
+          future: viewModel.getRecentTrips(userID,null,null,null,null,null,null,UserDataHolder.getInstance().userCurrentStatus),
           builder: (context , snapshot){
             if (snapshot.hasData) {
               print("destination countries call");

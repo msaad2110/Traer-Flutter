@@ -50,6 +50,10 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       json['pm_type'] as String?,
       json['pm_last_four'] as String?,
       json['trial_ends_at'] as String?,
+      json['profile_picture'] == null
+          ? null
+          : ProfilePicture.fromJson(
+              json['profile_picture'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -68,4 +72,33 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'pm_type': instance.pm_type,
       'pm_last_four': instance.pm_last_four,
       'trial_ends_at': instance.trial_ends_at,
+      'profile_picture': instance.profile_picture,
+    };
+
+ProfilePicture _$ProfilePictureFromJson(Map<String, dynamic> json) =>
+    ProfilePicture(
+      json['id'] as int,
+      json['document_type_id'] as int,
+      json['user_id'] as int,
+      json['name'] as String,
+      json['file_name'] as String,
+      json['file_path'] as String,
+      json['file_preview_path'] as String,
+      json['created_at'] as String,
+      json['updated_at'] as String,
+      json['deleted_at'] as String?,
+    );
+
+Map<String, dynamic> _$ProfilePictureToJson(ProfilePicture instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'document_type_id': instance.document_type_id,
+      'user_id': instance.user_id,
+      'name': instance.name,
+      'file_name': instance.file_name,
+      'file_path': instance.file_path,
+      'file_preview_path': instance.file_preview_path,
+      'created_at': instance.created_at,
+      'updated_at': instance.updated_at,
+      'deleted_at': instance.deleted_at,
     };

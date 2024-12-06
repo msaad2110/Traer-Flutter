@@ -5,18 +5,24 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter/material.dart' as _i30;
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as _i35;
+import 'package:flutter_chat_types/flutter_chat_types.dart' as _i36;
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i32;
-import 'package:traer/models/trip_history_model.dart' as _i31;
+import 'package:stacked_services/stacked_services.dart' as _i39;
+import 'package:traer/models/customer_trip_detail_model.dart' as _i38;
+import 'package:traer/models/trip_history_model.dart' as _i37;
 import 'package:traer/ui/common/account/account_view.dart' as _i11;
+import 'package:traer/ui/common/addcard/addcard_view.dart' as _i17;
+import 'package:traer/ui/common/cards_list/cardslist_view.dart' as _i34;
 import 'package:traer/ui/common/changepasword/change_password_view.dart'
     as _i26;
 import 'package:traer/ui/common/chat/chat_view.dart' as _i9;
+import 'package:traer/ui/common/chat_users/chat_users_view.dart' as _i33;
 import 'package:traer/ui/common/editprofile/edit_profile_view.dart' as _i28;
 import 'package:traer/ui/common/forgotpassword/forgot_password_view.dart'
     as _i27;
+import 'package:traer/ui/common/fund/fund_view.dart' as _i8;
 import 'package:traer/ui/common/intro/intro_view.dart' as _i3;
 import 'package:traer/ui/common/login/login_view.dart' as _i4;
 import 'package:traer/ui/common/signup/signup_view.dart' as _i5;
@@ -29,14 +35,16 @@ import 'package:traer/ui/customer/customer_order/customer_orderview.dart'
     as _i23;
 import 'package:traer/ui/customer/customer_orderhistory/customer_orderhistory_view.dart'
     as _i22;
+import 'package:traer/ui/customer/customer_track_order/customer_track_order_view.dart'
+    as _i31;
+import 'package:traer/ui/customer/customer_trip_detail/customer_trip_detailview.dart'
+    as _i30;
 import 'package:traer/ui/customer/customer_trip_filter/customer_trip_filter_view.dart'
     as _i25;
 import 'package:traer/ui/customer/customer_trip_history/customer_triphistory_view.dart'
     as _i24;
-import 'package:traer/ui/traveler/addcard/addcard_view.dart' as _i17;
 import 'package:traer/ui/traveler/appsettings/appsetting_view.dart' as _i14;
 import 'package:traer/ui/traveler/edittrip/edittrip_view.dart' as _i19;
-import 'package:traer/ui/traveler/fund/fund_view.dart' as _i8;
 import 'package:traer/ui/traveler/home/home_view.dart' as _i7;
 import 'package:traer/ui/traveler/main/main_view.dart' as _i6;
 import 'package:traer/ui/traveler/neworder/neworder_view.dart' as _i13;
@@ -44,6 +52,7 @@ import 'package:traer/ui/traveler/newtrip/newtrip_view.dart' as _i12;
 import 'package:traer/ui/traveler/order/order_view.dart' as _i10;
 import 'package:traer/ui/traveler/order_history/order_history_view.dart'
     as _i15;
+import 'package:traer/ui/traveler/order_status/order_status_view.dart' as _i32;
 import 'package:traer/ui/traveler/trip_history/trip_history_view.dart' as _i16;
 import 'package:traer/ui/traveler/tripdetail/trip_detail_view.dart' as _i18;
 
@@ -104,6 +113,16 @@ class Routes {
 
   static const uploadDocumentView = '/upload-document-view';
 
+  static const customerTripDetailView = '/customer-trip-detail-view';
+
+  static const customerTrackOrderView = '/customer-track-order-view';
+
+  static const orderStatusView = '/order-status-view';
+
+  static const chatUsersView = '/chat-users-view';
+
+  static const cardslistView = '/cardslist-view';
+
   static const all = <String>{
     splashView,
     introView,
@@ -133,6 +152,11 @@ class Routes {
     forgotPaswordView,
     editProfileView,
     uploadDocumentView,
+    customerTripDetailView,
+    customerTrackOrderView,
+    orderStatusView,
+    chatUsersView,
+    cardslistView,
   };
 }
 
@@ -250,175 +274,229 @@ class StackedRouter extends _i1.RouterBase {
       Routes.uploadDocumentView,
       page: _i29.UploadDocumentView,
     ),
+    _i1.RouteDef(
+      Routes.customerTripDetailView,
+      page: _i30.CustomerTripDetailView,
+    ),
+    _i1.RouteDef(
+      Routes.customerTrackOrderView,
+      page: _i31.CustomerTrackOrderView,
+    ),
+    _i1.RouteDef(
+      Routes.orderStatusView,
+      page: _i32.OrderStatusView,
+    ),
+    _i1.RouteDef(
+      Routes.chatUsersView,
+      page: _i33.ChatUsersView,
+    ),
+    _i1.RouteDef(
+      Routes.cardslistView,
+      page: _i34.CardslistView,
+    ),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
     _i2.SplashView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i2.SplashView(),
         settings: data,
       );
     },
     _i3.IntroView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i3.IntroView(),
         settings: data,
       );
     },
     _i4.LoginView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i4.LoginView(),
         settings: data,
       );
     },
     _i5.SignUpView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i5.SignUpView(),
         settings: data,
       );
     },
     _i6.MainView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i6.MainView(),
         settings: data,
       );
     },
     _i7.HomeView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i7.HomeView(),
         settings: data,
       );
     },
     _i8.FundView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i8.FundView(),
         settings: data,
       );
     },
     _i9.ChatView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i9.ChatView(),
+      final args = data.getArgs<ChatViewArguments>(nullOk: false);
+      return _i35.MaterialPageRoute<dynamic>(
+        builder: (context) => _i9.ChatView(args.room),
         settings: data,
       );
     },
     _i10.OrderView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i10.OrderView(),
         settings: data,
       );
     },
     _i11.AccountView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i11.AccountView(),
         settings: data,
       );
     },
     _i12.NewTripView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i12.NewTripView(),
         settings: data,
       );
     },
     _i13.NewOrderView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i13.NewOrderView(),
         settings: data,
       );
     },
     _i14.AppSettingView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i14.AppSettingView(),
         settings: data,
       );
     },
     _i15.OrderHistoryView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i15.OrderHistoryView(),
         settings: data,
       );
     },
     _i16.TripHistoryView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => const _i16.TripHistoryView(),
         settings: data,
       );
     },
     _i17.AddCardView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i17.AddCardView(),
         settings: data,
       );
     },
     _i18.TripDetailView: (data) {
       final args = data.getArgs<TripDetailViewArguments>(nullOk: false);
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i18.TripDetailView(args.dataSource),
         settings: data,
       );
     },
     _i19.EditTripView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i19.EditTripView(),
         settings: data,
       );
     },
     _i20.CustomerMainView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i20.CustomerMainView(),
         settings: data,
       );
     },
     _i21.CustomerHomeView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i21.CustomerHomeView(),
         settings: data,
       );
     },
     _i22.CustomerOrderHistoryView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i22.CustomerOrderHistoryView(),
         settings: data,
       );
     },
     _i23.CustomerOrderView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i23.CustomerOrderView(),
         settings: data,
       );
     },
     _i24.CustomerTripHistoryView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => const _i24.CustomerTripHistoryView(),
         settings: data,
       );
     },
     _i25.CustomerTripFilterView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i25.CustomerTripFilterView(),
         settings: data,
       );
     },
     _i26.ChangePasswordView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i26.ChangePasswordView(),
         settings: data,
       );
     },
     _i27.ForgotPaswordView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i27.ForgotPaswordView(),
         settings: data,
       );
     },
     _i28.EditProfileView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i28.EditProfileView(),
         settings: data,
       );
     },
     _i29.UploadDocumentView: (data) {
-      return _i30.MaterialPageRoute<dynamic>(
+      return _i35.MaterialPageRoute<dynamic>(
         builder: (context) => _i29.UploadDocumentView(),
+        settings: data,
+      );
+    },
+    _i30.CustomerTripDetailView: (data) {
+      final args = data.getArgs<CustomerTripDetailViewArguments>(nullOk: false);
+      return _i35.MaterialPageRoute<dynamic>(
+        builder: (context) =>
+            _i30.CustomerTripDetailView(args.customerTripDetailModel),
+        settings: data,
+      );
+    },
+    _i31.CustomerTrackOrderView: (data) {
+      return _i35.MaterialPageRoute<dynamic>(
+        builder: (context) => _i31.CustomerTrackOrderView(),
+        settings: data,
+      );
+    },
+    _i32.OrderStatusView: (data) {
+      final args = data.getArgs<OrderStatusViewArguments>(nullOk: false);
+      return _i35.MaterialPageRoute<dynamic>(
+        builder: (context) => _i32.OrderStatusView(args.orderID),
+        settings: data,
+      );
+    },
+    _i33.ChatUsersView: (data) {
+      return _i35.MaterialPageRoute<dynamic>(
+        builder: (context) => _i33.ChatUsersView(),
+        settings: data,
+      );
+    },
+    _i34.CardslistView: (data) {
+      return _i35.MaterialPageRoute<dynamic>(
+        builder: (context) => _i34.CardslistView(),
         settings: data,
       );
     },
@@ -431,10 +509,32 @@ class StackedRouter extends _i1.RouterBase {
   Map<Type, _i1.StackedRouteFactory> get pagesMap => _pagesMap;
 }
 
+class ChatViewArguments {
+  const ChatViewArguments({required this.room});
+
+  final _i36.Room room;
+
+  @override
+  String toString() {
+    return '{"room": "$room"}';
+  }
+
+  @override
+  bool operator ==(covariant ChatViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.room == room;
+  }
+
+  @override
+  int get hashCode {
+    return room.hashCode;
+  }
+}
+
 class TripDetailViewArguments {
   const TripDetailViewArguments({required this.dataSource});
 
-  final _i31.Data dataSource;
+  final _i37.Data dataSource;
 
   @override
   String toString() {
@@ -453,7 +553,52 @@ class TripDetailViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i32.NavigationService {
+class CustomerTripDetailViewArguments {
+  const CustomerTripDetailViewArguments(
+      {required this.customerTripDetailModel});
+
+  final _i38.CustomerTripDetailModel customerTripDetailModel;
+
+  @override
+  String toString() {
+    return '{"customerTripDetailModel": "$customerTripDetailModel"}';
+  }
+
+  @override
+  bool operator ==(covariant CustomerTripDetailViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.customerTripDetailModel == customerTripDetailModel;
+  }
+
+  @override
+  int get hashCode {
+    return customerTripDetailModel.hashCode;
+  }
+}
+
+class OrderStatusViewArguments {
+  const OrderStatusViewArguments({required this.orderID});
+
+  final int orderID;
+
+  @override
+  String toString() {
+    return '{"orderID": "$orderID"}';
+  }
+
+  @override
+  bool operator ==(covariant OrderStatusViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.orderID == orderID;
+  }
+
+  @override
+  int get hashCode {
+    return orderID.hashCode;
+  }
+}
+
+extension NavigatorStateExtension on _i39.NavigationService {
   Future<dynamic> navigateToSplashView([
     int? routerId,
     bool preventDuplicates = true,
@@ -552,14 +697,16 @@ extension NavigatorStateExtension on _i32.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToChatView([
+  Future<dynamic> navigateToChatView({
+    required _i36.Room room,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.chatView,
+        arguments: ChatViewArguments(room: room),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -679,7 +826,7 @@ extension NavigatorStateExtension on _i32.NavigationService {
   }
 
   Future<dynamic> navigateToTripDetailView({
-    required _i31.Data dataSource,
+    required _i37.Data dataSource,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -848,6 +995,81 @@ extension NavigatorStateExtension on _i32.NavigationService {
         transition: transition);
   }
 
+  Future<dynamic> navigateToCustomerTripDetailView({
+    required _i38.CustomerTripDetailModel customerTripDetailModel,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return navigateTo<dynamic>(Routes.customerTripDetailView,
+        arguments: CustomerTripDetailViewArguments(
+            customerTripDetailModel: customerTripDetailModel),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToCustomerTrackOrderView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.customerTrackOrderView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToOrderStatusView({
+    required int orderID,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return navigateTo<dynamic>(Routes.orderStatusView,
+        arguments: OrderStatusViewArguments(orderID: orderID),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToChatUsersView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.chatUsersView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToCardslistView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.cardslistView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
   Future<dynamic> replaceWithSplashView([
     int? routerId,
     bool preventDuplicates = true,
@@ -946,14 +1168,16 @@ extension NavigatorStateExtension on _i32.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithChatView([
+  Future<dynamic> replaceWithChatView({
+    required _i36.Room room,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.chatView,
+        arguments: ChatViewArguments(room: room),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1073,7 +1297,7 @@ extension NavigatorStateExtension on _i32.NavigationService {
   }
 
   Future<dynamic> replaceWithTripDetailView({
-    required _i31.Data dataSource,
+    required _i37.Data dataSource,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1236,6 +1460,81 @@ extension NavigatorStateExtension on _i32.NavigationService {
         transition,
   ]) async {
     return replaceWith<dynamic>(Routes.uploadDocumentView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithCustomerTripDetailView({
+    required _i38.CustomerTripDetailModel customerTripDetailModel,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.customerTripDetailView,
+        arguments: CustomerTripDetailViewArguments(
+            customerTripDetailModel: customerTripDetailModel),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithCustomerTrackOrderView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.customerTrackOrderView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithOrderStatusView({
+    required int orderID,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.orderStatusView,
+        arguments: OrderStatusViewArguments(orderID: orderID),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithChatUsersView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.chatUsersView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithCardslistView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.cardslistView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

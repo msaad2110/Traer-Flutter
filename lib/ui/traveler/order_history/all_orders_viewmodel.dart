@@ -14,9 +14,9 @@ class AllOrdersViewModel extends BaseViewModel{
   List<orderModel.Data> allOrdersList = [];
   ValueNotifier<List<orderModel.Data>> allFoundOrders = ValueNotifier<List<orderModel.Data>>([]);
 
-  Future<orderModel.OrderHistoryModel>  getAllOrders( int userID ) async {
+  Future<orderModel.OrderHistoryModel>  getAllOrders( int userID , int is_traveller) async {
 
-    orderModel.OrderHistoryModel responseModel = await service.getAllOrders(userID);
+    orderModel.OrderHistoryModel responseModel = await service.getAllOrders(userID,is_traveller);
 
     return  responseModel;
 

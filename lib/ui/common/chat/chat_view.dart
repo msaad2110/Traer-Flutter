@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:stacked/stacked.dart';
+import 'package:traer/provider/theme_helper.dart';
 import 'package:traer/ui/common/chat/chat_viewmodel.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -17,34 +19,24 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mime/mime.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:traer/utils/colorfield.dart';
 import 'package:uuid/uuid.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ChatView extends StatefulWidget {
-  const ChatView({super.key});
+  types.Room room;
+
+
+  ChatView(this.room);
 
   @override
   State<ChatView> createState() => _ChatViewState();
 }
 
 class _ChatViewState extends State<ChatView> {
-  List<types.Message> _messages = [];
-  final _user = const types.User(
-    id: '82091008-a484-4a89-ae75-a22bf8d6f3ac',
-  );
+  bool _isAttachmentUploading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadMessages();
-  }
-
-  void _addMessage(types.Message message) {
-    setState(() {
-      _messages.insert(0, message);
-    });
-  }
-
-  void _handleAttachmentPressed() {
+  void _handleAtachmentPressed() {
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) => SafeArea(
@@ -59,7 +51,7 @@ class _ChatViewState extends State<ChatView> {
                   _handleImageSelection();
                 },
                 child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
+                  alignment: Alignment.centerLeft,
                   child: Text('Photo'),
                 ),
               ),
@@ -69,14 +61,14 @@ class _ChatViewState extends State<ChatView> {
                   _handleFileSelection();
                 },
                 child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
+                  alignment: Alignment.centerLeft,
                   child: Text('File'),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
+                  alignment: Alignment.centerLeft,
                   child: Text('Cancel'),
                 ),
               ),
@@ -93,17 +85,28 @@ class _ChatViewState extends State<ChatView> {
     );
 
     if (result != null && result.files.single.path != null) {
-      final message = types.FileMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: const Uuid().v4(),
-        mimeType: lookupMimeType(result.files.single.path!),
-        name: result.files.single.name,
-        size: result.files.single.size,
-        uri: result.files.single.path!,
-      );
+      _setAttachmentUploading(true);
+      final name = result.files.single.name;
+      final filePath = result.files.single.path!;
+      final file = File(filePath);
 
-      _addMessage(message);
+      try {
+        final reference = FirebaseStorage.instance.ref(name);
+        await reference.putFile(file);
+        final uri = await reference.getDownloadURL();
+
+        final message = types.PartialFile(
+          mimeType: lookupMimeType(filePath),
+          name: name,
+          size: result.files.single.size,
+          uri: uri,
+        );
+
+        FirebaseChatCore.instance.sendMessage(message, widget.room.id);
+        _setAttachmentUploading(false);
+      } finally {
+        _setAttachmentUploading(false);
+      }
     }
   }
 
@@ -115,21 +118,34 @@ class _ChatViewState extends State<ChatView> {
     );
 
     if (result != null) {
+      _setAttachmentUploading(true);
+      final file = File(result.path);
+      final size = file.lengthSync();
       final bytes = await result.readAsBytes();
       final image = await decodeImageFromList(bytes);
+      final name = result.name;
 
-      final message = types.ImageMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        height: image.height.toDouble(),
-        id: const Uuid().v4(),
-        name: result.name,
-        size: bytes.length,
-        uri: result.path,
-        width: image.width.toDouble(),
-      );
+      try {
+        final reference = FirebaseStorage.instance.ref(name);
+        await reference.putFile(file);
+        final uri = await reference.getDownloadURL();
 
-      _addMessage(message);
+        final message = types.PartialImage(
+          height: image.height.toDouble(),
+          name: name,
+          size: size,
+          uri: uri,
+          width: image.width.toDouble(),
+        );
+
+        FirebaseChatCore.instance.sendMessage(
+          message,
+          widget.room.id,
+        );
+        _setAttachmentUploading(false);
+      } finally {
+        _setAttachmentUploading(false);
+      }
     }
   }
 
@@ -139,16 +155,11 @@ class _ChatViewState extends State<ChatView> {
 
       if (message.uri.startsWith('http')) {
         try {
-          final index =
-          _messages.indexWhere((element) => element.id == message.id);
-          final updatedMessage =
-          (_messages[index] as types.FileMessage).copyWith(
-            isLoading: true,
+          final updatedMessage = message.copyWith(isLoading: true);
+          FirebaseChatCore.instance.updateMessage(
+            updatedMessage,
+            widget.room.id,
           );
-
-          setState(() {
-            _messages[index] = updatedMessage;
-          });
 
           final client = http.Client();
           final request = await client.get(Uri.parse(message.uri));
@@ -161,16 +172,11 @@ class _ChatViewState extends State<ChatView> {
             await file.writeAsBytes(bytes);
           }
         } finally {
-          final index =
-          _messages.indexWhere((element) => element.id == message.id);
-          final updatedMessage =
-          (_messages[index] as types.FileMessage).copyWith(
-            isLoading: null,
+          final updatedMessage = message.copyWith(isLoading: false);
+          FirebaseChatCore.instance.updateMessage(
+            updatedMessage,
+            widget.room.id,
           );
-
-          setState(() {
-            _messages[index] = updatedMessage;
-          });
         }
       }
 
@@ -182,54 +188,61 @@ class _ChatViewState extends State<ChatView> {
       types.TextMessage message,
       types.PreviewData previewData,
       ) {
-    final index = _messages.indexWhere((element) => element.id == message.id);
-    final updatedMessage = (_messages[index] as types.TextMessage).copyWith(
-      previewData: previewData,
-    );
+    final updatedMessage = message.copyWith(previewData: previewData);
 
-    setState(() {
-      _messages[index] = updatedMessage;
-    });
+    FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
   }
 
   void _handleSendPressed(types.PartialText message) {
-    final textMessage = types.TextMessage(
-      author: _user,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-      id: const Uuid().v4(),
-      text: message.text,
+    FirebaseChatCore.instance.sendMessage(
+      message,
+      widget.room.id,
     );
-
-    _addMessage(textMessage);
   }
 
-  void _loadMessages() async {
-    final response = await rootBundle.loadString('assets/messages.json');
-    final messages = (jsonDecode(response) as List)
-        .map((e) => types.Message.fromJson(e as Map<String, dynamic>))
-        .toList();
-
+  void _setAttachmentUploading(bool uploading) {
     setState(() {
-      _messages = messages;
+      _isAttachmentUploading = uploading;
     });
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+
+
+
+
+  @override
   Widget build(BuildContext context) => Scaffold(
-    body: Chat(
-      messages: _messages,
-      onAttachmentPressed: _handleAttachmentPressed,
-      onMessageTap: _handleMessageTap,
-      onPreviewDataFetched: _handlePreviewDataFetched,
-      onSendPressed: _handleSendPressed,
-      showUserAvatars: true,
-      showUserNames: true,
-      user: _user,
-      theme: const DefaultChatTheme(
-        seenIcon: Text(
-          'read',
-          style: TextStyle(
-            fontSize: 10.0,
+    body: StreamBuilder<types.Room>(
+      initialData: widget.room,
+      stream: FirebaseChatCore.instance.room(widget.room.id),
+      builder: (context, snapshot) => StreamBuilder<List<types.Message>>(
+        initialData: const [],
+        stream: FirebaseChatCore.instance.messages(snapshot.data!),
+        builder: (context, snapshot) => Chat(
+          isAttachmentUploading: _isAttachmentUploading,
+          messages: snapshot.data ?? [],
+          onAttachmentPressed: _handleAtachmentPressed,
+          onMessageTap: _handleMessageTap,
+          onPreviewDataFetched: _handlePreviewDataFetched,
+          onSendPressed: _handleSendPressed,
+          theme: const DefaultChatTheme(
+            inputBackgroundColor:  Color(0XFF007AFF),
+            primaryColor:  Color(0XFF007AFF),
+            secondaryColor:  Color(0XFF007AFF),
+            seenIcon: Text(
+              'read',
+              style: TextStyle(
+                fontSize: 10.0,
+              ),
+            ),
+          ),
+          user: types.User(
+            id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
           ),
         ),
       ),

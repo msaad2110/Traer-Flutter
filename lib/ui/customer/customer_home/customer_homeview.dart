@@ -1,61 +1,76 @@
 
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:traer/base/app_setup.locator.dart';
 import 'package:traer/base/app_setup.router.dart';
 import 'package:traer/localization/app_localization.dart';
+import 'package:traer/models/customer_trip_detail_model.dart';
 import 'package:traer/models/user_data_holder.dart';
 import 'package:traer/provider/app_decoration.dart';
+import 'package:traer/provider/custom_button_style.dart';
 import 'package:traer/provider/custom_text_style.dart';
 import 'package:traer/provider/theme_helper.dart';
 import 'package:traer/ui/customer/customer_home/customer_home_viewmodel.dart';
 import 'package:traer/ui/customer/customer_main/customer_main_viewmodel.dart';
+import 'package:traer/utils/dialog.dart';
 import 'package:traer/utils/image_constant.dart';
 import 'package:traer/utils/pref_utils.dart';
 import 'package:traer/widgets/custom_app_bar.dart';
 import 'package:traer/widgets/custom_icon_button.dart';
 import 'package:traer/widgets/custom_image_view.dart';
 import 'package:traer/models/trip_history_model.dart' as tripModel;
+import 'package:traer/widgets/custom_loader.dart';
 import 'package:traer/widgets/custom_outlined_button.dart';
-
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'package:traer/widgets/custom_progressbar.dart';
 class CustomerHomeView extends StackedView<CustomerHomeViewModel>{
 
   @override
   Widget builder(BuildContext context, CustomerHomeViewModel viewModel, Widget? child) {
     return SafeArea(
-        child: Scaffold(
-            appBar: _buildAppBar(context,viewModel),
-            body: Container(
-                width: double.maxFinite,
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(children: [
-                  _buildOrderComponent(context,viewModel),
-                  SizedBox(height: 12),
-                  _buildFrame1(context),
-                  SizedBox(height: 10),
-                  _buildFrameTwentyFive(context),
-                  SizedBox(height: 21),
-                  Expanded(child: getRecentTrips(viewModel,UserDataHolder.getInstance().loginData?.data?.user?.id ?? 0)),
-                  // _buildFrameFifteen(context),
-                  SizedBox(height: 12),
-                  /*_buildFrame(context,
-                      parkhiText: "lbl_par_khi".tr,
-                      marText: "lbl_mar_15_2023".tr),
-                  SizedBox(height: 12.v),
-                  _buildFrameFifteen2(context),
-                  SizedBox(height: 12.v),
-                  _buildFrameFifteen3(context),
-                  SizedBox(height: 12.v),
-                  _buildFrame(context,
-                      parkhiText: "lbl_par_khi".tr,
-                      marText: "lbl_mar_15_2023".tr)*/
-                ]))));
+        child: LoaderOverlay(
+          useDefaultLoading: false,
+          overlayWidgetBuilder: (pro){
+            return customProgessBar();
+          },
+          child: Scaffold(
+              appBar: _buildAppBar(context,viewModel),
+              body: Container(
+                  width: double.maxFinite,
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(children: [
+                    _buildOrderComponent(context,viewModel),
+                    SizedBox(height: 12),
+                    _buildFrame1(context),
+                    SizedBox(height: 10),
+                    _buildFrameTwentyFive(context),
+                    SizedBox(height: 21),
+                    Expanded(child: getRecentTrips(viewModel,UserDataHolder.getInstance().loginData?.data?.user?.id ?? 0)),
+                    // _buildFrameFifteen(context),
+                    SizedBox(height: 12),
+                    /*_buildFrame(context,
+                        parkhiText: "lbl_par_khi".tr,
+                        marText: "lbl_mar_15_2023".tr),
+                    SizedBox(height: 12.v),
+                    _buildFrameFifteen2(context),
+                    SizedBox(height: 12.v),
+                    _buildFrameFifteen3(context),
+                    SizedBox(height: 12.v),
+                    _buildFrame(context,
+                        parkhiText: "lbl_par_khi".tr,
+                        marText: "lbl_mar_15_2023".tr)*/
+                  ]))),
+        ));
   }
 
   @override
@@ -166,7 +181,7 @@ class CustomerHomeView extends StackedView<CustomerHomeViewModel>{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomImageView(
-                imagePath: ImageConstant.imgIcOutlineReceiptLong,
+                imagePath: ImageConstant.imgOrders,
                 height: 38,
                 width: 38,
                 radius: BorderRadius.circular(
@@ -205,7 +220,7 @@ class CustomerHomeView extends StackedView<CustomerHomeViewModel>{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomImageView(
-                imagePath: ImageConstant.imgIcOutlineReceiptLong,
+                imagePath: ImageConstant.imgTrips,
                 height: 38,
                 width: 38,
                 radius: BorderRadius.circular(
@@ -240,7 +255,7 @@ class CustomerHomeView extends StackedView<CustomerHomeViewModel>{
   Widget _buildFrame1(BuildContext context) {
     return InkWell(
         onTap: () {
-          locator<NavigationService>().navigateTo(Routes.orderHistoryView);
+          locator<NavigationService>().navigateTo(Routes.customerOrderHistoryView);
         },
         child: Container(
 
@@ -296,7 +311,7 @@ class CustomerHomeView extends StackedView<CustomerHomeViewModel>{
     print("destination countries call2");
     return FutureBuilder(
         key: Key('recent_trips_future_builder'),
-        future: viewModel.getRecentTrips(userID,null,null,null,null,null,null),
+        future: viewModel.getRecentTrips(userID,null,null,null,null,null,null,UserDataHolder.getInstance().userCurrentStatus),
         builder: (context , snapshot){
           if (snapshot.hasData) {
             print("destination countries call");
@@ -315,6 +330,10 @@ class CustomerHomeView extends StackedView<CustomerHomeViewModel>{
 
   Widget buildRecentTripListView(CustomerHomeViewModel viewModel , BuildContext context , List<tripModel.Data> data){
     print(data.length);
+
+
+
+
     return data.isNotEmpty ? ListView.builder(
         shrinkWrap: true,
         itemCount: data.length,
@@ -329,6 +348,24 @@ class CustomerHomeView extends StackedView<CustomerHomeViewModel>{
   }
 
   Widget triplistItem(CustomerHomeViewModel homeViewModel , tripModel.Data dataSource , BuildContext context , int index) {
+
+    String startDateTimeString = "${dataSource.start_date} ${dataSource.start_time == null ? "01:25:00" : dataSource.start_time}";
+    DateFormat sFormatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+    DateTime startDateTime = sFormatter.parse(startDateTimeString);
+
+    String endDateTimeString = "${dataSource.end_date} ${dataSource.end_time  == null ? "04:25:00" : dataSource.end_time}";
+    DateFormat eFormatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+    DateTime endDateTime = eFormatter.parse(endDateTimeString);
+
+    Duration difference = endDateTime.difference(startDateTime);
+
+    int daysDifference = difference.inDays;
+    int hoursDifference = difference.inHours % 24; // Get hours excluding whole days
+    int minutesDifference = difference.inMinutes % 60; // Get minutes excluding whole hours
+
+    print("Difference: $daysDifference days, $hoursDifference hours, $minutesDifference minutes");
+
+
     return Slidable(
       key:  ValueKey(dataSource),
       // The end action pane is the one at the right or the bottom side.
@@ -357,50 +394,322 @@ class CustomerHomeView extends StackedView<CustomerHomeViewModel>{
       ),
       child: GestureDetector(
         onTap: (){
-          locator<NavigationService>().navigateTo(Routes.tripDetailView,arguments: TripDetailViewArguments(dataSource: dataSource));
-        },
+          locator<NavigationService>().navigateTo(Routes.customerTripDetailView,arguments:
+          CustomerTripDetailViewArguments(customerTripDetailModel:  CustomerTripDetailModel(
+              dataSource.id,
+              dataSource.luggage_type_id,
+              dataSource.travelling_from,
+              dataSource.travelling_to,
+              dataSource.start_date,
+              dataSource.end_date,
+              dataSource.start_time,
+              dataSource.end_time,
+              dataSource.luggage_space,
+              dataSource.commission,
+              dataSource.created_by_id,
+              dataSource.updated_by_id,
+              dataSource.created_at,
+              dataSource.updated_at,
+              dataSource.deleted_by_id,
+              dataSource.deleted_at,
+              LuggageType(dataSource.luggage_type?.id,dataSource.luggage_type?.name),
+              CreatedBy(dataSource.created_by?.id,dataSource.created_by?.first_name,dataSource.created_by?.last_name,dataSource.created_by?.email,dataSource.created_by?.phone,
+                 dataSource.created_by?.country ,dataSource.created_by?.is_traveller,dataSource.created_by?.is_verified,dataSource.created_by?.stripe_id,
+                dataSource.created_by?.pm_type ,dataSource.created_by?.pm_last_four,
+                ProfilePicture(dataSource.created_by?.profile_picture?.id , dataSource.created_by?.profile_picture?.document_type_id,dataSource.created_by?.profile_picture?.user_id,
+                    dataSource.created_by?.profile_picture?.name,dataSource.created_by?.profile_picture?.file_name,dataSource.created_by?.profile_picture?.file_path,dataSource.created_by?.profile_picture?.file_preview_path)),
+          )));        },
         child: Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 11),
-            decoration: AppDecoration.fillGray10001
-                .copyWith(borderRadius: BorderRadiusStyle.circleBorder12),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              CustomIconButton(
-                  height: 42,
-                  width: 42,
-                  padding: EdgeInsets.all(8),
-                  child: CustomImageView(
-                      imagePath: homeViewModel.imageList[index % homeViewModel.imageList.length])),
+          margin: EdgeInsets.symmetric(vertical: 10),
+          padding: EdgeInsets.symmetric(
+            horizontal: 17,
+            vertical: 15,
+          ),
+          decoration: AppDecoration.outlineBlack9006.copyWith(
+            borderRadius: BorderRadiusStyle.circleBorder12,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
               Padding(
-                  padding: EdgeInsets.only(left: 16),
-                  child: Column(
+                padding: EdgeInsets.symmetric(horizontal: 3),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-
                       children: [
-                        Text(("${dataSource.travelling_from} -  ${dataSource.travelling_to}"),
-                            style: theme.textTheme.titleMedium!.copyWith(
-                                color: theme.colorScheme.onSecondaryContainer)),
-                        SizedBox(height: 6),
-                        Text(("${formatDate(dataSource.start_date ?? "")} -  ${formatDate(dataSource.end_date ?? "")}"),
-                            style: theme.textTheme.bodySmall!
-                                .copyWith(color: appTheme.gray80002))
-                      ])),
-              Spacer(),
-              CustomImageView(
-                  imagePath: ImageConstant.imgArrowRightBlack900,
-                  height: 24,
-                  width: 24,
-                  margin: EdgeInsets.symmetric(vertical: 9))
-            ])),
+                        Text(
+                          formatDate(dataSource.start_date ?? ""),
+                          style: CustomTextStyles.bodyMediumBluegray4000115,
+                        ),
+                        Text(
+                          formatTime(dataSource.start_time == null ? "01:25:00" : dataSource.start_time ?? ""),
+                          //formatTime(dataSource.start_date ?? ""),
+                          style: CustomTextStyles.bodyMediumBluegray4000115,
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          dataSource.travelling_from ?? "",
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 4),
+                      child: Column(
+                        children: [
+                          Text(
+                            "$daysDifference d$hoursDifference h$minutesDifference m",
+                            style: CustomTextStyles.bodyMediumBluegray40001,
+                          ),
+                          SizedBox(height: 8),
+                          SizedBox(
+                            width: 100,
+                            child: Divider(),
+                          ),
+                          SizedBox(height: 9),
+                          Text(
+                            "1 stop",
+                            style: CustomTextStyles.bodyMediumBlack900,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          formatDate(dataSource.end_date ?? ""),
+                          style: CustomTextStyles.bodyMediumBluegray4000115,
+                        ),
+                        Text(
+                            formatTime(dataSource.end_time == null ? "01:25:00" : dataSource.end_time ?? ""),
+                          //formatTime(dataSource.end_date ?? ""),
+                          style: CustomTextStyles.bodyMediumBluegray4000115,
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                            overflow: TextOverflow.ellipsis,
+                           dataSource.travelling_to ?? "",
+
+                            style: theme.textTheme.bodyLarge,
+                          ),
+
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  /*CustomImageView(
+                    imagePath: ImageConstant.imgEllipse1226x26,
+                    height: 26,
+                    width: 26,
+                    radius: BorderRadius.circular(
+                      13,
+                    ),
+                  ),*/
+                  _buildAvatar("${dataSource.created_by?.first_name}","${dataSource.created_by?.last_name}"),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 4,
+                      top: 4,
+                      bottom: 4,
+                    ),
+                    child: Text(
+                      "${dataSource.created_by?.first_name} " " ${dataSource.created_by?.last_name}",
+                      style: CustomTextStyles.titleSmallBlack900Medium_2,
+                    ),
+                  ),
+                  Spacer(),
+                  CustomOutlinedButton(
+                    height: 21,
+                    width: 84,
+                    text: "4.8",
+                    margin: EdgeInsets.symmetric(vertical: 3),
+                    leftIcon: Container(
+                      margin: EdgeInsets.only(right: 5),
+                      child: CustomImageView(
+                        imagePath: ImageConstant.imgSignal,
+                        height: 10,
+                        width: 10,
+                      ),
+                    ),
+                    buttonStyle: CustomButtonStyles.outlineBlack,
+                    buttonTextStyle: CustomTextStyles.titleMediumBlack900_2,
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              Divider(
+                color: appTheme.gray20002,
+              ),
+              SizedBox(height: 13),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 1),
+                            child: Text(
+                              "Commission:",
+                              style: CustomTextStyles.labelLargeGray80002,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 6),
+                            child: Text(
+                              "${dataSource.commission.toString()}%",
+                              style: CustomTextStyles.titleSmallBlack900_1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 4),
+                      SizedBox(
+                        width: 137,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 1),
+                              child: Text(
+                                "Available Space:",
+                                style: CustomTextStyles.labelLargeGray80002,
+                              ),
+                            ),
+                            Text(
+                              " ${dataSource.luggage_space}KG",
+                              style: CustomTextStyles.titleSmallBlack900_1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  CustomOutlinedButton(
+                    onPressed: (){
+                      CustomLoader.showLoader(context);
+                      getSingleUserById(dataSource.created_by?.email ?? "").then((user) async {
+                        if (user!.id.isNotEmpty) {
+                          final room = await FirebaseChatCore.instance.createRoom(user);
+                          CustomLoader.hideLoader(context);
+                          locator<NavigationService>().navigateTo(Routes.chatView,
+                              arguments: ChatViewArguments(room:room));
+                        } else {
+                          CustomLoader.hideLoader(context);
+                          CustomDialog.showSuccessDialog(context,message:  "Oops Error Occured , Try Again Later" , onPressedDialog: (){
+                            Navigator.pop(context);
+                          });
+                          print("User with ID  not found");
+                        }
+                      });
+                    },
+                    width: 83,
+                    text: "CHAT",
+                    margin: EdgeInsets.only(
+                      top: 6,
+                      bottom: 5,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 3),
+            ],
+          ),
+        ),
       ),
     );
   }
 
+  /*Future<types.User?> getSingleUserById(String email) async {
+    types.User?  user = null;
+    // Assuming conversion to a List is appropriate for your use case
+    final userList = await FirebaseChatCore.instance.users().singleWhere(test);
+    print(userList.toList().iterator);
+
+    return userList.firstWhere((user) => user.metadata!["email"] == email, orElse: () => types.User(id: ""));
+  }*/
+
+  Future<types.User?> getSingleUserById(String email) async {
+    types.User? record  = null;
+    List<types.User> list = await getAllUsers();
+    print(list);
+    for (types.User user in list) {
+      if(user.metadata!["email"] == email){
+        record = user;
+      }
+    }
+    return record == null ?  types.User(id: "") : record;
+  }
+
+  Future<List<types.User>> getAllUsers() async {
+    Stream<List<types.User>> users = await FirebaseChatCore.instance.users();
+    final completer = Completer<List<types.User>>();
+    users.forEach((foundList){
+      completer.complete(foundList.cast<types.User>()); // Cast and complete
+    });
+    return completer.future;
+    }
+
+  Widget _buildAvatar(String fname , String lName) {
+    var color = appTheme.whiteA700;
+
+    /*if (room.type == types.RoomType.direct) {
+      try {
+        final otherUser = room.users.firstWhere(
+              (u) => u.id != _user!.uid,
+        );
+
+        color = getUserAvatarNameColor(otherUser);
+      } catch (e) {
+        // Do nothing if other user is not found.
+      }
+    }*/
+
+    String firstLetterFirstName = fname.substring(0, 1);
+    String firstLetterLastName = lName.substring(0, 1);
+
+
+    return Container(
+      margin: const EdgeInsets.only(right: 16),
+      child: CircleAvatar(
+        backgroundColor:  color,
+        backgroundImage:  null,
+        radius: 20,
+        child:  Text(
+         " ${firstLetterFirstName.toUpperCase()}${firstLetterLastName.toUpperCase()} ",
+          style: const TextStyle(color: Colors.black),
+        )
+            ,
+      ),
+    );
+  }
+
+
   String formatDate(String dateStr) {
     final dateFormat = DateFormat("yyyy-MM-dd");
     final formattedDate = DateFormat("dd MMM, yyyy").format(dateFormat.parse(dateStr));
+    //final formattedDate = DateFormat('yyyy/MM/dd hh:mm:ss a').format(dateFormat.parse(dateStr));
     return formattedDate;
   }
+
+  String formatTime(String dateStr) {
+    final dateFormat = DateFormat("hh:mm:ss");
+    //final dateFormat = DateFormat("yyyy-MM-dd");
+    final formattedDate = DateFormat('hh:mm:ss a').format(dateFormat.parse(dateStr));
+    return formattedDate;
+  }
+
 
   Widget showShimmer(BuildContext context) {
     return Shimmer.fromColors(

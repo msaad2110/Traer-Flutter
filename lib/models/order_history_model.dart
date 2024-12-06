@@ -24,6 +24,7 @@ class Data {
   int? product_space;
   int? product_value;
   String? description;
+  String? tracking_number;
   int? is_insured;
   int? created_by_id;
   int? updated_by_id;
@@ -32,6 +33,8 @@ class Data {
   String? deleted_by_id;
   String? deleted_at;
   Trip? trip;
+  CreatedBy? created_by;
+
 
   Data(
       this.id,
@@ -40,6 +43,7 @@ class Data {
       this.product_space,
       this.product_value,
       this.description,
+      this.tracking_number,
       this.is_insured,
       this.created_by_id,
       this.updated_by_id,
@@ -47,8 +51,8 @@ class Data {
       this.updated_at,
       this.deleted_by_id,
       this.deleted_at,
-      this.trip);
-
+      this.trip,
+      this.created_by);
 
   factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
   Map<String, dynamic> toJson() => _$DataToJson(this);
@@ -89,4 +93,58 @@ class Trip {
 
   factory Trip.fromJson(Map<String, dynamic> json) => _$TripFromJson(json);
   Map<String, dynamic> toJson() => _$TripToJson(this);
+}
+
+@JsonSerializable()
+class CreatedBy {
+  int? id;
+  String? first_name;
+  String? last_name;
+  String? email;
+  String? phone;
+  String? country;
+  int? is_traveller;
+  int? is_verified;
+  String? stripe_id;
+  String? pm_type;
+  String? pm_last_four;
+  ProfilePicture? profile_picture;
+
+
+  CreatedBy(this.id,
+      this.first_name,
+      this.last_name,
+      this.email,
+      this.phone,
+      this.country,
+      this.is_traveller,
+      this.is_verified,
+      this.stripe_id,
+      this.pm_type,
+      this.pm_last_four,
+      this.profile_picture);
+
+  factory CreatedBy.fromJson(Map<String, dynamic> json) =>
+      _$CreatedByFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CreatedByToJson(this);
+
+}
+
+@JsonSerializable(includeIfNull: true)
+class ProfilePicture {
+  int? id;
+  int? document_type_id;
+  int? user_id;
+  String? name;
+  String? file_name;
+  String? file_path;
+  String? file_preview_path;
+
+
+  ProfilePicture(this.id, this.document_type_id, this.user_id, this.name,
+      this.file_name, this.file_path, this.file_preview_path);
+
+  factory ProfilePicture.fromJson(Map<String, dynamic> json) => _$ProfilePictureFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfilePictureToJson(this);
 }

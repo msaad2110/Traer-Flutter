@@ -44,6 +44,7 @@ class User {
   String? pm_type;
   String? pm_last_four;
   String? trial_ends_at;
+  ProfilePicture? profile_picture;
 
 
   User(
@@ -61,8 +62,40 @@ class User {
       this.stripe_id,
       this.pm_type,
       this.pm_last_four,
-      this.trial_ends_at);
+      this.trial_ends_at,
+      this.profile_picture);
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+
+
+@JsonSerializable(includeIfNull: true)
+class ProfilePicture {
+  final int id;
+  final int document_type_id;
+  final int user_id;
+  final String name;
+  final String file_name;
+  final String file_path;
+  final String file_preview_path;
+  final String created_at;
+  final String updated_at;
+  final String? deleted_at;
+
+
+  ProfilePicture(
+      this.id,
+      this.document_type_id,
+      this.user_id,
+      this.name,
+      this.file_name,
+      this.file_path,
+      this.file_preview_path,
+      this.created_at,
+      this.updated_at,
+      this.deleted_at);
+
+  factory ProfilePicture.fromJson(Map<String, dynamic> json) => _$ProfilePictureFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfilePictureToJson(this);
 }

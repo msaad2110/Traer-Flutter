@@ -30,7 +30,7 @@ class ImageConstant {
 
   // Sign Up images
   static String imgFrame1000001861 = '$imagePath/img_frame_1000001861.svg';
-
+  static String imgGroup9 = '$imagePath/img_group_9.png';
   // ID Verification images
   static String imgVector = '$imagePath/img_vector.svg';
 
@@ -288,6 +288,20 @@ class ImageConstant {
   static String imgLogo = 'assets/images/img.png';
 
   static String loader = 'assets/images/loader.gif';
+
+  static String imgPassword = 'assets/images/image_password.svg';
+
+  static String imgDocument = 'assets/images/image_document.svg';
+
+  static String imgTrips = 'assets/images/image_trips.svg';
+
+  static String imgOrders = 'assets/images/image_order.svg';
+
+  static String imgFront = 'assets/images/image_front.svg';
+
+  static String imgBack = 'assets/images/image_back.svg';
+
+  static String imgSelfie = 'assets/images/image_selfie.svg';
 
 
 

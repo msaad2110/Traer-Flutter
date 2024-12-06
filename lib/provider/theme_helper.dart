@@ -74,8 +74,8 @@ class ThemeHelper {
         ),
       ),
       radioTheme: RadioThemeData(
-        fillColor: MaterialStateColor.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) {
+        fillColor: WidgetStateColor.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
             return colorScheme.onErrorContainer.withOpacity(1);
           }
           return colorScheme.onSurface;
@@ -195,7 +195,7 @@ class TextThemes {
 
 /// Class containing the supported color schemes.
 class ColorSchemes {
-  static final primaryColorScheme = ColorScheme.light(
+  static final primaryColorScheme = const ColorScheme.light(
     // Primary colors
     primary: Color(0XFF007AFF),
     primaryContainer: Color(0X99212121),

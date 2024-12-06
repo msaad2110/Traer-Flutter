@@ -19,8 +19,11 @@ import 'package:traer/provider/app_decoration.dart';
 import 'package:traer/provider/custom_button_style.dart';
 import 'package:traer/provider/custom_text_style.dart';
 import 'package:traer/provider/theme_helper.dart';
+import 'package:traer/ui/traveler/neworder/flightdetails_item_widget.dart';
 import 'package:traer/ui/traveler/neworder/new_order_form_viewmodel.dart';
 import 'package:traer/ui/traveler/neworder/new_order_trips_viewmodel.dart';
+import 'package:traer/ui/traveler/neworder/neworder_finduser_viewmodel.dart';
+import 'package:traer/ui/traveler/neworder/neworder_userdetail_viewmodel.dart';
 import 'package:traer/ui/traveler/neworder/neworder_viewmodel.dart';
 import 'package:traer/utils/colorfield.dart';
 import 'package:traer/utils/dialog.dart';
@@ -28,6 +31,7 @@ import 'package:traer/utils/image_constant.dart';
 import 'package:traer/widgets/appbar_leading_image.dart';
 import 'package:traer/widgets/appbar_subtitle_three.dart';
 import 'package:traer/widgets/custom_app_bar.dart';
+import 'package:traer/widgets/custom_elevated_button.dart';
 import 'package:traer/widgets/custom_floating_text_field.dart';
 import 'package:traer/widgets/custom_icon_button.dart';
 import 'package:traer/widgets/custom_image_view.dart';
@@ -61,7 +65,6 @@ class NewOrderView extends StackedView<NewOrderViewModel> {
   }
 
   @override
-  // TODO: implement reactive
   bool get reactive => super.reactive;
 
 
@@ -69,12 +72,16 @@ class NewOrderView extends StackedView<NewOrderViewModel> {
     return PageView.builder(
       controller: viewModel.pageController,
       physics: NeverScrollableScrollPhysics(),
-      itemCount: 2, // Number of screens
+      itemCount: 4, // Number of screens
       itemBuilder: (context, index) {
         switch (index) {
           case 0:
             return NewOrderTripsView(viewModel);
           case 1:
+            return NewOrderSearchUserView(viewModel);
+          case 2:
+            return NewOrderDeailView(viewModel);
+          case 3:
             return NewOrderFormView(viewModel);
           default:
             return NewOrderTripsView(viewModel); // Handle unexpected indices
@@ -201,7 +208,7 @@ class NewOrderTripsView extends StackedView<NewOrderTripsViewModel>{
 
     FutureBuilder<tripModel.TripHistoryModel> getAllTrips(NewOrderTripsViewModel viewModel , int userID){
       return FutureBuilder(
-          future: viewModel.getAllTrips(userID,null,null,null,null,null,null),
+          future: viewModel.getAllTrips(userID,null,null,null,null,null,null,UserDataHolder.getInstance().userCurrentStatus),
           builder: (context , snapshot){
             if (snapshot.hasData) {
               print("destination countries call");
@@ -373,6 +380,487 @@ class NewOrderTripsView extends StackedView<NewOrderTripsViewModel>{
 }
 
 
+class NewOrderSearchUserView extends StackedView<NewOrderFindUserViewModel>{
+
+  NewOrderViewModel parentViewModel;
+
+
+  NewOrderSearchUserView(this.parentViewModel);
+
+
+  @override
+  Widget builder(BuildContext context, NewOrderFindUserViewModel viewModel, Widget? child) {
+    return createNewOrder(context, viewModel);
+  }
+
+  @override
+  NewOrderFindUserViewModel viewModelBuilder(BuildContext context) {
+    return NewOrderFindUserViewModel();
+  }
+
+  @override
+  void onViewModelReady(NewOrderFindUserViewModel viewModel) {
+    super.onViewModelReady(viewModel);
+  }
+
+
+  @override
+  // TODO: implement reactive
+  bool get reactive => super.reactive;
+
+  PreferredSizeWidget _buildAppBar(BuildContext context, String title,
+      {required Function() onBackClicked}) {
+    return CustomAppBar(
+        leadingWidth: 26,
+        leading: AppbarLeadingImage(
+            imagePath: ImageConstant.imgUserPrimary,
+            margin: EdgeInsets.only(left: 20, top: 21, bottom: 24),
+            onTap: () {
+              //onTapClose(context);
+              onBackClicked();
+            }),
+        title: AppbarSubtitleThree(
+            text: title, margin: EdgeInsets.only(left: 14)));
+  }
+
+  Widget createNewOrder(BuildContext context, NewOrderFindUserViewModel viewModel) {
+    return LoaderOverlay(
+      useDefaultLoading: false,
+      overlayWidgetBuilder: (pro) {
+        return customProgessBar();
+      },
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (value){
+          print(value);
+          parentViewModel.setCurrentIndex(0);
+        },
+        child: SafeArea(
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: _buildAppBar(context, "New Order", onBackClicked: () {
+              parentViewModel.setCurrentIndex(0);
+            }),
+            body: Form(
+              child: Builder(
+                builder: (context) {
+                  viewModel.formContext = context;
+                  return SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 7),
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("please enter customer email...".tr,
+                                style: CustomTextStyles.titleMediumSemiBold),
+                          ),
+                        ),
+                        Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 13),
+                            margin:
+                                EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                            child: _buildEmailField(context, viewModel)),
+
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            bottomNavigationBar:
+                bottomButton("Continue", context, onButtonPress: () {
+
+              if (viewModel.validateForm(viewModel.formContext)) {
+              if (!viewModel.isEmailSame(viewModel.emailFieldController.text,context)) {
+                print(viewModel.emailFieldController.text);
+                onTapnewOrder(context, viewModel);
+                }
+
+              }
+            }),
+          ),
+        ),
+      ),
+    );
+  }
+
+  onTapnewOrder(BuildContext context , NewOrderFindUserViewModel viewModel) {
+    CustomLoader.showLoader(context);
+    //  viewModel.login("shaheerzaeem26@gmail.com", "test_password").then((value){
+    viewModel.getUser(viewModel.emailFieldController.text
+    ).then((value){
+      CustomLoader.hideLoader(context);
+      if((value.data?.length  ?? 0) > 0){
+        parentViewModel.userProfile = value;
+        parentViewModel.setCurrentIndex(2);
+           print("successfully fetched");
+           print(value.data?.first.first_name);
+      }else{
+        CustomDialog.showErrorDialog(context,message: value.message ?? "", onPressedDialog: (){
+          Navigator.pop(context);
+        });
+      }
+      print(value.toJson());
+    }).catchError((onError){
+      CustomLoader.hideLoader(context);
+      CustomDialog.showErrorDialog(context, onPressedDialog: (){
+        Navigator.pop(context);
+      });
+      print(onError.toString());
+    });
+    // locator<NavigationService>().navigateTo(Routes.splashView);
+  }
+
+  onTapClose(BuildContext context) {
+    locator<NavigationService>().clearStackAndShow(Routes.mainView);
+  }
+
+  Widget _buildEmailField(BuildContext context , NewOrderFindUserViewModel viewModel) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: AppDecoration.fillGray10001
+          .copyWith(borderRadius: BorderRadiusStyle.circleBorder12),
+      child: CustomFloatingTextField(
+          focusNode: viewModel.focusNodeEmail,
+          controller: viewModel.emailFieldController,
+          labelText: "lbl_email".tr,
+          labelStyle: CustomTextStyles.titleMediumPrimaryContainer_1,
+          hintText: "lbl_email".tr,
+          textInputType: TextInputType.emailAddress,
+          contentPadding: EdgeInsets.only(top: 18),
+          borderDecoration: FloatingTextFormFieldStyleHelper.custom,
+          validator: viewModel.validateEmail
+      ),
+
+    );
+  }
+
+
+  Widget bottomButton(String buttonText, BuildContext context, {required Function() onButtonPress}) {
+    return CustomOutlinedButton(
+        height: 48,
+        text: buttonText,
+        buttonStyle: CustomButtonStyles.outlinePrimaryTL101,
+        buttonTextStyle: CustomTextStyles.titleMediumOnErrorContainerSemiBold,
+        margin: EdgeInsets.only(left: 20, right: 20, bottom: 34),
+        onPressed: () {
+          onButtonPress();
+          //  onTapPostTrip(context);
+        });
+  }
+
+}
+
+
+class NewOrderDeailView extends StackedView<NewOrderUserDetailViewModel>{
+
+  NewOrderViewModel parentViewModel;
+
+
+  NewOrderDeailView(this.parentViewModel);
+
+
+  @override
+  Widget builder(BuildContext context, NewOrderUserDetailViewModel viewModel, Widget? child) {
+    return createNewOrder(context);
+  }
+
+  @override
+  NewOrderUserDetailViewModel viewModelBuilder(BuildContext context) {
+    return NewOrderUserDetailViewModel();
+  }
+
+  @override
+  void onViewModelReady(NewOrderUserDetailViewModel viewModel) {
+    super.onViewModelReady(viewModel);
+  }
+
+
+  @override
+  // TODO: implement reactive
+  bool get reactive => super.reactive;
+
+  PreferredSizeWidget _buildAppBar(BuildContext context, String title,
+      {required Function() onBackClicked}) {
+    return CustomAppBar(
+        leadingWidth: 26,
+        leading: AppbarLeadingImage(
+            imagePath: ImageConstant.imgUserPrimary,
+            margin: EdgeInsets.only(left: 20, top: 21, bottom: 24),
+            onTap: () {
+              //onTapClose(context);
+              onBackClicked();
+            }),
+        title: AppbarSubtitleThree(
+            text: title, margin: EdgeInsets.only(left: 14)));
+  }
+
+  Widget createNewOrder(BuildContext context) {
+    return LoaderOverlay(
+      useDefaultLoading: false,
+      overlayWidgetBuilder: (pro) {
+        return customProgessBar();
+      },
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (value){
+          print(value);
+          parentViewModel.setCurrentIndex(1);
+        },
+        child: SafeArea(
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: _buildAppBar(context, "New Order", onBackClicked: () {
+              parentViewModel.setCurrentIndex(1);
+            }),
+            body: Container(
+                width: double.maxFinite,
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 21),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Customer Details",
+                              style: CustomTextStyles.titleMediumSemiBold)),
+                      SizedBox(height: 10),
+                      _buildFrameFifteen(context),
+                      SizedBox(height: 12),
+                      Spacer(),
+                    ])),
+            bottomNavigationBar:
+                bottomButton("Next", context, onButtonPress: () {
+                  parentViewModel.setCurrentIndex(3);
+            }),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFrameFifteen(BuildContext context) {
+    return Container(
+       width: MediaQuery.sizeOf(context).width,
+        padding: EdgeInsets.all(10),
+        decoration: AppDecoration.fillGray10001
+            .copyWith(borderRadius: BorderRadiusStyle.roundedBorder4),
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Name", style: theme.textTheme.bodySmall),
+              SizedBox(height: 6),
+              Text("${parentViewModel.userProfile.data?.first.first_name} "
+                  "${parentViewModel.userProfile.data?.first.last_name}", style: theme.textTheme.titleMedium),
+              SizedBox(height: 6),
+              Text("Email", style: theme.textTheme.bodySmall),
+              SizedBox(height: 6),
+              Text("${parentViewModel.userProfile.data?.first.email}", style: theme.textTheme.titleMedium),
+              SizedBox(height: 4),
+              Text("country", style: theme.textTheme.bodySmall),
+              SizedBox(height: 6),
+              Text("${parentViewModel.userProfile.data?.first.country}", style: theme.textTheme.titleMedium),
+              SizedBox(height: 4),
+              Text("Verified", style: theme.textTheme.bodySmall),
+              SizedBox(height: 6),
+              Text(parentViewModel.userProfile.data?.first.is_verified == 0 ? "No" : "Yes", style: theme.textTheme.titleMedium),
+              SizedBox(height: 4),
+
+            ]));
+
+
+  }
+
+  Widget _buildFrameThirtySix(
+      BuildContext context, {
+        required String departureLabel,
+        required String aprCounterLabel,
+        required String returnLabel,
+        required String aprCounterLabel1,
+        required String spaceLabel,
+        required String weightLabel,
+      }) {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Expanded(
+          child: Container(
+              margin: EdgeInsets.only(right: 6),
+              padding: EdgeInsets.symmetric(horizontal: 27, vertical: 9),
+              decoration: AppDecoration.fillGray10001
+                  .copyWith(borderRadius: BorderRadiusStyle.roundedBorder4),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SizedBox(height: 5),
+                    Text(departureLabel,
+                        style: theme.textTheme.bodySmall!
+                            .copyWith(color: appTheme.gray80002)),
+                    SizedBox(height: 5),
+                    Text(aprCounterLabel,
+                        style: theme.textTheme.titleMedium!.copyWith(
+                            color: theme.colorScheme.onSecondaryContainer))
+                  ]))),
+      Expanded(
+          child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 6),
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 9),
+              decoration: AppDecoration.fillGray10001
+                  .copyWith(borderRadius: BorderRadiusStyle.roundedBorder7),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 3),
+                    Text(returnLabel,
+                        style: theme.textTheme.bodySmall!
+                            .copyWith(color: appTheme.gray80002)),
+                    SizedBox(height: 6),
+                    Text(aprCounterLabel1,
+                        style: theme.textTheme.titleMedium!.copyWith(
+                            color: theme.colorScheme.onSecondaryContainer))
+                  ]))),
+      Expanded(
+          child: Container(
+              margin: EdgeInsets.only(left: 6),
+              padding: EdgeInsets.symmetric(horizontal: 34, vertical: 9),
+              decoration: AppDecoration.fillGray10001
+                  .copyWith(borderRadius: BorderRadiusStyle.roundedBorder4),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SizedBox(height: 5),
+                    Text(spaceLabel,
+                        style: theme.textTheme.bodySmall!
+                            .copyWith(color: appTheme.gray80002)),
+                    SizedBox(height: 5),
+                    Text(weightLabel,
+                        style: theme.textTheme.titleMedium!.copyWith(
+                            color: theme.colorScheme.onSecondaryContainer))
+                  ])))
+    ]);
+  }
+
+  Widget _buildFlightDetails(BuildContext context) {
+    return Expanded(
+        child: ListView.separated(
+            physics: BouncingScrollPhysics(),
+            shrinkWrap: true,
+            separatorBuilder: (context, index) {
+              return SizedBox(height: 17);
+            },
+            itemCount: 3,
+            itemBuilder: (context, index) {
+              return FlightdetailsItemWidget(onTapFlightDetails: () {
+             //   onTapFlightDetails(context);
+              });
+            }));
+  }
+
+  Widget _buildFrame25KG(BuildContext context) {
+    return CustomElevatedButton(
+        height: 34,
+        width: 82,
+        text: "25KG",
+        margin: EdgeInsets.only(left: 10),
+        leftIcon: Container(
+            margin: EdgeInsets.only(right: 7),
+            child: CustomImageView(
+                imagePath: ImageConstant.imgThumbsupOnerror,
+                height: 20,
+                width: 20)),
+        buttonStyle: CustomButtonStyles.fillGray,
+        buttonTextStyle: CustomTextStyles.bodyMediumOnError);
+  }
+
+
+  Widget _buildFrameApr1518(BuildContext context) {
+    return CustomElevatedButton(
+        height: 34,
+        width: 112,
+        text: "Apr 15- 18",
+        leftIcon: Container(
+            margin: EdgeInsets.only(right: 7),
+            child: CustomImageView(
+                imagePath: ImageConstant.imgCalendar,
+                height: 20,
+                width: 20)),
+        buttonStyle: CustomButtonStyles.fillGray,
+        buttonTextStyle: CustomTextStyles.bodyMediumOnError);
+  }
+
+  onTapnewOrder(BuildContext context , NewOrderFindUserViewModel viewModel) {
+    CustomLoader.showLoader(context);
+    //  viewModel.login("shaheerzaeem26@gmail.com", "test_password").then((value){
+    viewModel.getUser(viewModel.emailFieldController.text
+    ).then((value){
+      CustomLoader.hideLoader(context);
+      if(value.success ?? false){
+        parentViewModel.setCurrentIndex(2);
+           print("successfully fetched");
+      }else{
+        CustomDialog.showErrorDialog(context,message: value.message ?? "", onPressedDialog: (){
+          Navigator.pop(context);
+        });
+      }
+      print(value.toJson());
+    }).catchError((onError){
+      CustomLoader.hideLoader(context);
+      CustomDialog.showErrorDialog(context, onPressedDialog: (){
+        Navigator.pop(context);
+      });
+      print(onError.toString());
+    });
+    // locator<NavigationService>().navigateTo(Routes.splashView);
+  }
+
+  onTapClose(BuildContext context) {
+    locator<NavigationService>().clearStackAndShow(Routes.mainView);
+  }
+
+  Widget _buildEmailField(BuildContext context , NewOrderFindUserViewModel viewModel) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: AppDecoration.fillGray10001
+          .copyWith(borderRadius: BorderRadiusStyle.circleBorder12),
+      child: CustomFloatingTextField(
+          focusNode: viewModel.focusNodeEmail,
+          controller: viewModel.emailFieldController,
+          labelText: "lbl_email".tr,
+          labelStyle: CustomTextStyles.titleMediumPrimaryContainer_1,
+          hintText: "lbl_email".tr,
+          textInputType: TextInputType.emailAddress,
+          contentPadding: EdgeInsets.only(top: 18),
+          borderDecoration: FloatingTextFormFieldStyleHelper.custom,
+          validator: viewModel.validateEmail
+      ),
+
+    );
+  }
+
+
+  Widget bottomButton(String buttonText, BuildContext context, {required Function() onButtonPress}) {
+    return CustomOutlinedButton(
+        height: 48,
+        text: buttonText,
+        buttonStyle: CustomButtonStyles.outlinePrimaryTL101,
+        buttonTextStyle: CustomTextStyles.titleMediumOnErrorContainerSemiBold,
+        margin: EdgeInsets.only(left: 20, right: 20, bottom: 34),
+        onPressed: () {
+          onButtonPress();
+          //  onTapPostTrip(context);
+        });
+  }
+
+}
+
 class NewOrderFormView extends StackedView<NewOrderFormViewModel>{
 
   NewOrderViewModel parentViewModel;
@@ -432,13 +920,13 @@ class NewOrderFormView extends StackedView<NewOrderFormViewModel>{
         canPop: false,
         onPopInvoked: (value){
           print(value);
-          parentViewModel.setCurrentIndex(0);
+          parentViewModel.setCurrentIndex(2);
         },
         child: SafeArea(
           child: Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: _buildAppBar(context, "New Order", onBackClicked: () {
-              parentViewModel.setCurrentIndex(0);
+              parentViewModel.setCurrentIndex(2);
             }),
             body: Form(
               child: Builder(
@@ -629,7 +1117,7 @@ class NewOrderFormView extends StackedView<NewOrderFormViewModel>{
               ),
             ),
             bottomNavigationBar:
-                bottomButton("Continue", context, onButtonPress: () {
+                bottomButton("Assign Order", context, onButtonPress: () {
 
               if (viewModel.validateForm(viewModel.formContext)) {
                 print(viewModel.productSpaceController.text);
@@ -658,7 +1146,8 @@ class NewOrderFormView extends StackedView<NewOrderFormViewModel>{
         parentViewModel.tripData.id ?? 0 ,
         viewModel.descriptionTextEditTextController.text  ?? "" ,
         int.parse(viewModel.productSpaceController.text),
-        int.parse(viewModel.productValueController.text)
+        int.parse(viewModel.productValueController.text),
+        parentViewModel.userProfile.data?.first.email ?? ""
     ).then((value){
       CustomLoader.hideLoader(context);
 

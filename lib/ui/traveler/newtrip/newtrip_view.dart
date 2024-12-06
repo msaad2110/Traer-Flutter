@@ -304,7 +304,9 @@ class NewTripView extends StackedView<NewTripViewModel>{
        DateFormat('yyyy/MM/dd').format(NewTripData.getInstance().startDate ?? DateTime.now()),
        DateFormat('yyyy/MM/dd').format(NewTripData.getInstance().endDateDate ?? DateTime.now()),
        int.parse(NewTripData.getInstance().luggageSpace ?? "0")  ,
-       int.parse(NewTripData.getInstance().commission ?? "0")
+       int.parse(NewTripData.getInstance().commission ?? "0"),
+       DateFormat('hh:mm:ss').format(NewTripData.getInstance().startDate ?? DateTime.now()),
+       DateFormat('hh:mm:ss').format(NewTripData.getInstance().endDateDate ?? DateTime.now()),
     ).then((value){
       CustomLoader.hideLoader(context);
 
@@ -2120,6 +2122,7 @@ class NewTripDateTimePickerScreen extends StackedView<NewTripDatePickerViewModel
                           }
                           viewModel.notifyListeners();
                           print("Start dateTime: ${dateTimeList?[0]}");
+                          print("Start dateTime: ${DateFormat('hh:mm:ss').format(NewTripData.getInstance().startDate ?? DateTime.now())}");
                           print("End dateTime: ${dateTimeList?[1]}");
                         }),
                     SizedBox(height: 10,),

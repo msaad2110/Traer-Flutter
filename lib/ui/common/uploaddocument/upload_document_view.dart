@@ -1,6 +1,7 @@
 
 
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -8,6 +9,7 @@ import 'package:face_camera/face_camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -32,7 +34,9 @@ import 'package:traer/widgets/appbar_leading_image.dart';
 import 'package:traer/widgets/appbar_subtitle_three.dart';
 import 'package:traer/widgets/custom_app_bar.dart';
 import 'package:traer/widgets/custom_image_view.dart';
+import 'package:traer/widgets/custom_loader.dart';
 import 'package:traer/widgets/custom_outlined_button.dart';
+import 'package:traer/widgets/custom_progressbar.dart';
 import 'package:traer/widgets/custom_search_view.dart';
 import 'package:typewritertext/typewritertext.dart';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
@@ -167,6 +171,7 @@ class UploadDocumentView extends StackedView<UploadDocumentViewModel>{
   Widget buildDocumentListView(UploadDocumentViewModel viewModel , BuildContext context , List<documentType.Data> data){
     print(data.length);
     data.removeWhere((element) => element.id == 1);
+    data.removeWhere((element) => element.id == 5);
     return data.isNotEmpty ? ListView.builder(
         shrinkWrap: true,
         itemCount: data.length,
@@ -355,9 +360,9 @@ class UploadFrontDocumentView extends StackedView<UploadIDFrontViewModel>{
                               ); // Display the image if it's available
                             } else {
                               return CustomImageView(
-                                  imagePath: ImageConstant.imgVector,
-                                  height: 200
-                                  , width: MediaQuery.sizeOf(context).width * 0.8,fit: BoxFit.fill,
+                                  imagePath: ImageConstant.imgFront,
+                                  height: 200,
+                                  width: MediaQuery.sizeOf(context).width * 0.6,fit: BoxFit.fill,
                                   alignment: Alignment.center); // Show a placeholder if no image is set
                             }
 
@@ -473,7 +478,7 @@ class UploadFrontDocumentView extends StackedView<UploadIDFrontViewModel>{
   void onPressed(UploadIDFrontViewModel viewModel) async {
     List<String> pictures;
     try {
-      pictures = await CunningDocumentScanner.getPictures(true) ?? [];
+      pictures = await CunningDocumentScanner.getPictures() ?? [];
        print(pictures.first);
        var file = File(pictures.first);
        UploadDocument.getInstance().documents.insert(0, file);
@@ -583,9 +588,9 @@ class UploadBackDocumentView extends StackedView<UploadIDBackViewModel>{
                                 ); // Display the image if it's available
                               } else {
                                 return CustomImageView(
-                                    imagePath: ImageConstant.imgVector,
+                                    imagePath: ImageConstant.imgBack,
                                     height: 200
-                                    , width: MediaQuery.sizeOf(context).width * 0.8,fit: BoxFit.fill,
+                                    , width: MediaQuery.sizeOf(context).width * 0.6,fit: BoxFit.fill,
                                     alignment: Alignment.center); // Show a placeholder if no image is set
                               }
                           },
@@ -676,7 +681,7 @@ class UploadBackDocumentView extends StackedView<UploadIDBackViewModel>{
   void onPressed(UploadIDBackViewModel viewModel) async {
     List<String> pictures;
     try {
-      pictures = await CunningDocumentScanner.getPictures(true) ?? [];
+      pictures = await CunningDocumentScanner.getPictures() ?? [];
       /*if (!mounted) return;*/
       //  setState(() {
       //_pictures = pictures;
@@ -757,131 +762,149 @@ class UploadSelfieView extends StackedView<UploadSelfieViewModel>{
 
   Widget nicView(BuildContext context , UploadSelfieViewModel viewModel) {
 
-    return  PopScope(
-      canPop: false,
-      onPopInvoked: (value){
-        if(UploadDocument.getInstance().documentType == 4 ){
-          parentViewModel.setCurrentIndex(1);
-        }else{
-          parentViewModel.setCurrentIndex(2);
-        }
-        //  backClick(viewModel.currentIndex, viewModel);
+    return  LoaderOverlay(
+      useDefaultLoading: false,
+      overlayWidgetBuilder: (pro) {
+        return customProgessBar();
       },
-      child: SafeArea(
-          child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: _buildAppBar(context ,"Upload Document", onBackClicked: (){
-              print("object");
-              if(UploadDocument.getInstance().documentType == 4 ){
-                parentViewModel.setCurrentIndex(1);
-              }else{
-                parentViewModel.setCurrentIndex(2);
-              }
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (value){
+          if(UploadDocument.getInstance().documentType == 4 ){
+            parentViewModel.setCurrentIndex(1);
+          }else{
+            parentViewModel.setCurrentIndex(2);
+          }
+          //  backClick(viewModel.currentIndex, viewModel);
+        },
+        child: SafeArea(
+            child: Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: _buildAppBar(context ,"Upload Document", onBackClicked: (){
+                print("object");
+                if(UploadDocument.getInstance().documentType == 4 ){
+                  parentViewModel.setCurrentIndex(1);
+                }else{
+                  parentViewModel.setCurrentIndex(2);
+                }
 
-            }),
-              body: Container(
-                  width: double.maxFinite,
-                  padding: EdgeInsets.symmetric(horizontal: 29, vertical: 28),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                          onTap: (){
-                            parentViewModel.setCurrentIndex(4);
-                          },
-                  child: UploadDocument.getInstance().selfie != null
-                    ? CustomImageView(
-                        imagePath:
-                            UploadDocument.getInstance().selfie?.uri.path,
-                        height: 200,
-                        width: 200,
-                        fit: BoxFit.fill,
-                        radius: BorderRadius.circular(100),
-                        alignment: Alignment.center,
-                      )
-                    : CustomImageView(
-                        imagePath: ImageConstant.imgImage5,
-                        height: 146,
-                        width: 146,
-                        alignment: Alignment.center),
-              ),
-              SizedBox(height: 40),
-                        Container(
-                            width: 330,
-                            margin: EdgeInsets.only(left: 1),
-                            child: Text("msg_please_provide_us3".tr,
-                                maxLines: 4,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                                style: CustomTextStyles.titleMedium18_1
-                                    .copyWith(height: 1.22))),
-                        SizedBox(height: 40),
-                        Center(
-                          child: Container(
-                            width: 200,
-                            child: Column(
-                              children: [
-                                Row(
-                                    children: [
-                                      CustomImageView(
-                                          imagePath:
-                                          ImageConstant.imgMaterialSymbolsNoFlash,
-                                          height: 24,
-                                          width: 24),
-                                      Padding(
-                                          padding: EdgeInsets.only(left: 16),
-                                          child: Text("lbl_no_flash".tr,
-                                              style:
-                                              CustomTextStyles.titleMediumSemiBold_1))
-                                    ]),
-                                SizedBox(height: 23),
-                                Row(children: [
-                                  CustomImageView(
-                                      imagePath: ImageConstant.imgBrightness,
-                                      height: 22,
-                                      width: 22),
-                                  Padding(
-                                      padding: EdgeInsets.only(left: 16, top: 2),
-                                      child: Text(("msg_use_a_light_room".tr+""),
-                                          style:
-                                          CustomTextStyles.titleMediumSemiBold_1))
-                                ]),
-                                SizedBox(height: 22),
-                                Row(
-                                    children: [
-                                      CustomImageView(
-                                          imagePath: ImageConstant.imgMaterialSymbol,
-                                          height: 24,
-                                          width: 24),
-                                      Padding(
-                                          padding:
-                                          EdgeInsets.only(left: 16, top: 2),
-                                          child: Text("msg_hold_the_camera".tr,
-                                              style: CustomTextStyles
-                                                  .titleMediumSemiBold_1))
-                                    ])
+              }),
+                body: Container(
+                    width: double.maxFinite,
+                    padding: EdgeInsets.symmetric(horizontal: 29, vertical: 28),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: (){
+                              parentViewModel.setCurrentIndex(4);
+                            },
+                    child: UploadDocument.getInstance().selfie != null
+                      ? CustomImageView(
+                          imagePath:
+                              UploadDocument.getInstance().selfie?.uri.path,
+                          height: 200,
+                          width: 200,
+                          fit: BoxFit.fill,
+                          radius: BorderRadius.circular(100),
+                          alignment: Alignment.center,
+                        )
+                      : CustomImageView(
+                          imagePath: ImageConstant.imgSelfie,
+                          height: 146,
+                          width: 146,
+                          alignment: Alignment.center),
+                ),
+                SizedBox(height: 40),
+                          Container(
+                              width: 330,
+                              margin: EdgeInsets.only(left: 1),
+                              child: Text("msg_please_provide_us3".tr,
+                                  maxLines: 4,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: CustomTextStyles.titleMedium18_1
+                                      .copyWith(height: 1.22))),
+                          SizedBox(height: 40),
+                          Center(
+                            child: Container(
+                              width: 200,
+                              child: Column(
+                                children: [
+                                  Row(
+                                      children: [
+                                        CustomImageView(
+                                            imagePath:
+                                            ImageConstant.imgMaterialSymbolsNoFlash,
+                                            height: 24,
+                                            width: 24),
+                                        Padding(
+                                            padding: EdgeInsets.only(left: 16),
+                                            child: Text("lbl_no_flash".tr,
+                                                style:
+                                                CustomTextStyles.titleMediumSemiBold_1))
+                                      ]),
+                                  SizedBox(height: 23),
+                                  Row(children: [
+                                    CustomImageView(
+                                        imagePath: ImageConstant.imgBrightness,
+                                        height: 22,
+                                        width: 22),
+                                    Padding(
+                                        padding: EdgeInsets.only(left: 16, top: 2),
+                                        child: Text(("msg_use_a_light_room".tr+""),
+                                            style:
+                                            CustomTextStyles.titleMediumSemiBold_1))
+                                  ]),
+                                  SizedBox(height: 22),
+                                  Row(
+                                      children: [
+                                        CustomImageView(
+                                            imagePath: ImageConstant.imgMaterialSymbol,
+                                            height: 24,
+                                            width: 24),
+                                        Padding(
+                                            padding:
+                                            EdgeInsets.only(left: 16, top: 2),
+                                            child: Text("msg_hold_the_camera".tr,
+                                                style: CustomTextStyles
+                                                    .titleMediumSemiBold_1))
+                                      ])
 
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 5)
-                      ])),
-            bottomNavigationBar: bottomButton("Continue", context, onButtonPress: () {
-              if(UploadDocument.getInstance().selfie != null){
-                CustomDialog.showErrorDialog(context,message:
-                "Upload Successfully", onPressedDialog: (){
-                  UploadDocument.getInstance().clearData();
-                  locator<NavigationService>().navigateTo(Routes.mainView);
-                });
-              }else{
-                CustomDialog.showErrorDialog(context,message:
-                "Please Upload Selfie", onPressedDialog: (){
-                  Navigator.pop(context);
-                });
-              }
-            }),
-          )),
+                          SizedBox(height: 5)
+                        ])),
+              bottomNavigationBar: bottomButton("Continue", context, onButtonPress: () {
+                if(UploadDocument.getInstance().selfie != null){
+                 /* CustomDialog.showErrorDialog(context,message:
+                  "Upload Successfully", onPressedDialog: (){
+                    UploadDocument.getInstance().clearData();
+                    locator<NavigationService>().navigateTo(Routes.mainView);
+                  });*/
+
+                  List<File> documentArray = [];
+                  List<int> documentIds = [];
+                  UploadDocument.getInstance().documents.forEach((element) {
+                    documentArray.add( element);
+                    documentIds.add(UploadDocument.getInstance().documentType ?? 0);
+                  });
+                  documentArray.add(UploadDocument.getInstance().selfie!);
+                  documentIds.add(5);
+
+                  viewModel.uploadDocumentsAPI(StackedService.navigatorKey!.currentState!.context,documentIds,documentArray);
+
+                }else{
+                  CustomDialog.showErrorDialog(context,message:
+                  "Please Upload Selfie", onPressedDialog: (){
+                    Navigator.pop(context);
+                  });
+                }
+              }),
+            )),
+      ),
     );
 
   }
@@ -889,7 +912,7 @@ class UploadSelfieView extends StackedView<UploadSelfieViewModel>{
   void onPressed(UploadIDBackViewModel viewModel) async {
     List<String> pictures;
     try {
-      pictures = await CunningDocumentScanner.getPictures(true) ?? [];
+      pictures = await CunningDocumentScanner.getPictures() ?? [];
       /*if (!mounted) return;*/
       //  setState(() {
       //_pictures = pictures;
@@ -935,6 +958,9 @@ class UploadSelfieView extends StackedView<UploadSelfieViewModel>{
         title: AppbarSubtitleThree(
             text: title, margin: EdgeInsets.only(left: 14)));
   }
+
+
+
 
 
 

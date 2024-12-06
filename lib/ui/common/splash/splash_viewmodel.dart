@@ -18,7 +18,6 @@ class SplashViewModel extends BaseViewModel{
     if(PrefUtils().getFirstRun()){
       if(PrefUtils().isContainKey(PrefUtils.userData)){
         getUserData();
-        locator<NavigationService>().pushNamedAndRemoveUntil(Routes.mainView);
       }else{
         locator<NavigationService>().pushNamedAndRemoveUntil(Routes.loginView);
       }
@@ -41,6 +40,9 @@ class SplashViewModel extends BaseViewModel{
   getUserData() async{
   LoginResponse  loginResponse = await LoginResponse.fromJson(await PrefUtils().read(PrefUtils.userData));
   UserDataHolder.getInstance().loginData = loginResponse;
+  UserDataHolder.getInstance().userCurrentStatus = loginResponse.data?.user?.is_traveller;
+  UserDataHolder.getInstance().userCurrentStatus  == 1 ? locator<NavigationService>().pushNamedAndRemoveUntil(Routes.mainView) : locator<NavigationService>().pushNamedAndRemoveUntil(Routes.customerMainView);
+
   }
 
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1062271216788",
+    "project_id": "traer-40850",
+    "storage_bucket": "traer-40850.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1062271216788:android:e4de51553fd8aedab75881",
+        "android_client_info": {
+          "package_name": "com.traer.app.traer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0_t4q8YGukio-NPO6tJPib54AXJYFJsk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -7,6 +7,8 @@ import 'package:traer/base/app_view.dart';
 import 'package:traer/utils/CreateMaterialColor.dart';
 import 'package:traer/utils/colorfield.dart';
 import 'package:traer/utils/pref_utils.dart';
+import 'firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 
 final createMaterialColor = CreateMaterialColor();
@@ -17,6 +19,14 @@ void main() async {
   await Stripe.instance.applySettings();
   await setupLocator();
   await FaceCamera.initialize();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+
+  );
+  /*await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug,
+    appleProvider: AppleProvider.appAttest,
+  );*/
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
       statusBarColor: ColorsField.whiteColor, // Color for Android
       statusBarBrightness: Brightness.dark // Dark == white status bar -- for IOS.

@@ -3,24 +3,30 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:traer/base/app_setup.locator.dart';
+import 'package:traer/base/app_setup.router.dart';
 import 'package:traer/localization/app_localization.dart';
 import 'package:traer/models/user_data_holder.dart';
 import 'package:traer/provider/app_decoration.dart';
+import 'package:traer/provider/custom_button_style.dart';
 import 'package:traer/provider/custom_text_style.dart';
 import 'package:traer/provider/theme_helper.dart';
 import 'package:traer/ui/customer/customer_orderhistory/customer_all_orders_viewmodel.dart';
 import 'package:traer/ui/customer/customer_orderhistory/customer_orderhistory_viewmodel.dart';
+import 'package:traer/utils/dialog.dart';
 import 'package:traer/utils/image_constant.dart';
 import 'package:traer/widgets/appbar_leading_image.dart';
 import 'package:traer/widgets/appbar_subtitle_three.dart';
 import 'package:traer/widgets/custom_app_bar.dart';
 import 'package:traer/widgets/custom_image_view.dart';
+import 'package:traer/widgets/custom_loader.dart';
 import 'package:traer/widgets/custom_outlined_button.dart';
 import 'package:traer/models/order_history_model.dart' as orderModel;
+import 'package:traer/widgets/custom_progressbar.dart';
 import 'package:traer/widgets/custom_search_view.dart';
 
 class CustomerOrderHistoryView extends StatefulWidget{
@@ -155,34 +161,40 @@ class AllOrdersScreen extends StackedView<CustomerAllOrdersViewModel>{
 
   @override
   Widget builder(BuildContext context, CustomerAllOrdersViewModel viewModel, Widget? child) {
-    return Column(
-      children: [
-        SizedBox(height: 2),
-        Align(
-          alignment: Alignment.center,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: CustomSearchView(
-              controller: viewModel.allOrdersSearchController,
-              onChanged: (v){
-                filterOrdersSearchResults(v.trim(),viewModel);
-              },
-              hintText: "lbl_search".tr,
+    return LoaderOverlay(
+      useDefaultLoading: false,
+      overlayWidgetBuilder: (pro) {
+        return customProgessBar();
+      },
+      child: Column(
+        children: [
+          SizedBox(height: 2),
+          Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: CustomSearchView(
+                controller: viewModel.allOrdersSearchController,
+                onChanged: (v){
+                  filterOrdersSearchResults(v.trim(),viewModel);
+                },
+                hintText: "lbl_search".tr,
 
-              alignment: Alignment.center,
+                alignment: Alignment.center,
+              ),
             ),
           ),
-        ),
-        SizedBox(height: 7),
-        Expanded(child: getAllOrders(viewModel))
+          SizedBox(height: 7),
+          Expanded(child: getAllOrders(viewModel))
 
-      ],
+        ],
+      ),
     );
   }
 
   FutureBuilder<orderModel.OrderHistoryModel> getAllOrders(CustomerAllOrdersViewModel viewModel){
     return FutureBuilder(
-        future: viewModel.getAllOrders(UserDataHolder.getInstance().loginData?.data?.user?.id ?? 0),
+        future: viewModel.getAllOrders(UserDataHolder.getInstance().loginData?.data?.user?.id ?? 0 , UserDataHolder.getInstance().userCurrentStatus ?? 0),
         builder: (context , snapshot){
           if (snapshot.hasData) {
             viewModel.allFoundOrders.value = (snapshot.data!.data ?? []);
@@ -319,7 +331,44 @@ class AllOrdersScreen extends StackedView<CustomerAllOrdersViewModel>{
     );
   }
 
+  Widget _buildAvatar(String fname , String lName) {
+    var color = appTheme.whiteA700;
+
+    /*if (room.type == types.RoomType.direct) {
+      try {
+        final otherUser = room.users.firstWhere(
+              (u) => u.id != _user!.uid,
+        );
+
+        color = getUserAvatarNameColor(otherUser);
+      } catch (e) {
+        // Do nothing if other user is not found.
+      }
+    }*/
+
+    String firstLetterFirstName = fname.substring(0, 1);
+    String firstLetterLastName = lName.substring(0, 1);
+
+
+    return Container(
+      margin: const EdgeInsets.only(right: 16),
+      child: CircleAvatar(
+        backgroundColor:  color,
+        backgroundImage:  null,
+        radius: 20,
+        child:  Text(
+          " ${firstLetterFirstName.toUpperCase()}${firstLetterLastName.toUpperCase()} ",
+          style: const TextStyle(color: Colors.black),
+        )
+        ,
+      ),
+    );
+  }
+
+
   Widget orderlistItem(CustomerAllOrdersViewModel homeViewModel , orderModel.Data dataSource , BuildContext context){
+    double result = (double.parse(dataSource.trip?.commission.toString() ?? "")  / 100.0) * (double.parse(dataSource.product_value.toString()));
+
 
     return InkWell(
       onTap: () {
@@ -338,26 +387,43 @@ class AllOrdersScreen extends StackedView<CustomerAllOrdersViewModel>{
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "N- "+dataSource.id.toString(),
-                style: CustomTextStyles.bodyMediumBlack900_1,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomOutlinedButton(
+                    width: 100,
+                    text: "ACTIVE",
+                    buttonStyle: CustomButtonStyles.outlineYellow,
+                    buttonTextStyle: CustomTextStyles.labelLargeYellow80001,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      "N-${dataSource.id}",
+                      style: CustomTextStyles.bodyMediumBlack900_1,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 9),
-              Text(
-                dataSource.description!,
-                style: CustomTextStyles.titleMediumBlack900_3,
+              SizedBox(height: 7),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  dataSource.description ?? "",
+                  style: theme.textTheme.titleMedium,
+                ),
               ),
               SizedBox(height: 10),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CustomImageView(
-                    imagePath: ImageConstant.imgFrame68,
+                    imagePath: ImageConstant.imgFrame68Gray900,
                     height: 30,
                     width: 4,
                     margin: EdgeInsets.only(
                       top: 4,
-                      bottom: 6,
+                      bottom: 5,
                     ),
                   ),
                   Padding(
@@ -366,27 +432,72 @@ class AllOrdersScreen extends StackedView<CustomerAllOrdersViewModel>{
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          dataSource.trip?.travelling_from ?? "",
+                          dataSource.trip!.travelling_from ?? "",
                           style: CustomTextStyles.bodyMediumBlack900_1,
                         ),
                         SizedBox(height: 6),
                         Text(
-                          dataSource.trip?.travelling_to ?? "",
+                          dataSource.trip!.travelling_to ?? "",
                           style: CustomTextStyles.bodyMediumBlack900_1,
                         ),
                       ],
                     ),
                   ),
                   Spacer(),
+                  CustomImageView(
+                    imagePath: ImageConstant.imgRefresh,
+                    height: 8,
+                    width: 22,
+                    margin: EdgeInsets.only(
+                      top: 15,
+                      bottom: 16,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 5,
+                      top: 8,
+                      bottom: 5,
+                    ),
+                    child: Text(
+                      result.toString() ?? "",
+                      style: theme.textTheme.titleLarge,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // CustomImageView(
+                  //   imagePath: ImageConstant.imgEllipse15,
+                  //   height: 30,
+                  //   width: 30,
+                  //   radius: BorderRadius.circular(
+                  //     15,
+                  //   ),
+                  // ),
+                  _buildAvatar(dataSource.created_by?.first_name ?? "", dataSource.created_by?.last_name ?? ""),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 6,
+                      top: 7,
+                      bottom: 7,
+                    ),
+                    child: Text(
+                      "${dataSource.created_by?.first_name} ${dataSource.created_by?.last_name}",
+                      style: CustomTextStyles.bodySmallGray700,
+                    ),
+                  ),
+                  Spacer(),
                   CustomOutlinedButton(
                     width: 137,
-                    text: "lbl_update_status".tr,
-                    margin: EdgeInsets.only(
-                      top: 6,
-                      bottom: 8,
-                    ),
+                    //text: "UPDATE STATUS",
+                    text: "PAYMENT",
                     onPressed: () {
-                      // onTapUpdateStatusButton!.call();
+                      onTapPaymentButton(context, homeViewModel, dataSource.id ?? 0);
+                     //locator<NavigationService>().navigateTo(Routes.customerTrackOrderView);
                     },
                   ),
                 ],
@@ -401,6 +512,39 @@ class AllOrdersScreen extends StackedView<CustomerAllOrdersViewModel>{
   }
 
 
+  onTapPaymentButton(BuildContext context , CustomerAllOrdersViewModel viewModel , int orderID ) {
+    if(viewModel.paymentModel == null){
+      CustomDialog.showErrorDialog(context,message:"please add payment method", onPressedDialog: (){
+        Navigator.pop(context);
+        locator<NavigationService>().navigateTo(Routes.cardslistView);
+      });
+    }else{
+      print(viewModel.paymentModel!.id);
+      CustomLoader.showLoader(context);
+      viewModel.payment(viewModel.paymentModel!.id ?? "0" , UserDataHolder.getInstance().loginData!.data!.user!.id  ?? 0 , orderID ).then((value){
+        print(value);
+        CustomLoader.hideLoader(context);
+        if(value.success ?? false){
+          CustomDialog.showSuccessDialog(context,message: value.message ?? "" , onPressedDialog: (){
+            locator<NavigationService>().back();
+            viewModel.notifyListeners();
+          });
+        }else{
+          CustomDialog.showErrorDialog(context,message: value.message ?? "", onPressedDialog: (){
+            Navigator.pop(context);
+          });
+        }
+      }).catchError((onError){
+        CustomLoader.hideLoader(context);
+        CustomDialog.showErrorDialog(context, onPressedDialog: (){
+          Navigator.pop(context);
+          locator<NavigationService>().back();
+          viewModel.notifyListeners();
+        });
+      });
+    }
+  
+  }
 
   void filterOrdersSearchResults(String query , CustomerAllOrdersViewModel viewModel) {
 
@@ -428,7 +572,18 @@ class AllOrdersScreen extends StackedView<CustomerAllOrdersViewModel>{
 
   @override
   void onViewModelReady(CustomerAllOrdersViewModel viewModel) {
-    // TODO: implement onViewModelReady
+    print("636346 called");
+    viewModel.getDatabase().then((value){
+      print("543 called");
+      viewModel.paymentDao =  value;
+      value.findAll().then((onValue){
+        if(onValue.length > 0){
+          viewModel.paymentModel =  onValue.first;
+          print("model called");
+          print(onValue);
+        }
+      });
+    });
     super.onViewModelReady(viewModel);
   }
 

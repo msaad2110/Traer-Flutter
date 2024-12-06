@@ -167,7 +167,7 @@ class HomeView extends StackedView<HomeViewModel>{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomImageView(
-                imagePath: ImageConstant.imgIcOutlineReceiptLong,
+                imagePath: ImageConstant.imgOrders,
                 height: 38,
                 width: 38,
                 radius: BorderRadius.circular(
@@ -207,7 +207,7 @@ class HomeView extends StackedView<HomeViewModel>{
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomImageView(
-                imagePath: ImageConstant.imgIcOutlineReceiptLong,
+                imagePath: ImageConstant.imgTrips,
                 height: 38,
                 width: 38,
                 radius: BorderRadius.circular(
@@ -299,7 +299,7 @@ class HomeView extends StackedView<HomeViewModel>{
     print("destination countries call2");
     return FutureBuilder(
         key: Key('recent_trips_future_builder'),
-        future: viewModel.getRecentTrips(userID,null,null,null,null,null,null),
+        future: viewModel.getRecentTrips(userID,null,null,null,null,null,null,UserDataHolder.getInstance().userCurrentStatus),
         builder: (context , snapshot){
           if (snapshot.hasData) {
             print("destination countries call");

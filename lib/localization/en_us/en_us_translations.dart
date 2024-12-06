@@ -107,7 +107,7 @@ final Map<String, String> enUs = {
   "lbl_luggage_type": "Luggage Type",
   "lbl_post_trip": "Post Trip",
   "lbl_traveling_date": "Traveling Date",
-  "lbl_traveling_to": "TRAVELING to",
+  "lbl_traveling_to": "Traveling to",
 
   // Traveler - Orders Screen
   "lbl_completed": "COMPLETED", "lbl_nadine_burzler": "Nadine Burzler",
@@ -391,7 +391,7 @@ final Map<String, String> enUs = {
   "lbl_to": "To",
   "lbl_today": "Today, ",
   "lbl_today_01_30pm": "Today, 01:30pm",
-  "lbl_traveling_from": "TRAVELING FROM",
+  "lbl_traveling_from": "Traveling from",
   "lbl_trip_details": "Trip Details",
   "lbl_trips": "Trips",
   "lbl_type_message": "Type message...",
